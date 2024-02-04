@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX IF NOT EXISTS "player_weeks_player_id_week_season_index" ON "player_weeks" ("player_id","week","season");

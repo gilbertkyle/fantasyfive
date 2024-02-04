@@ -10,4 +10,5 @@ export default {
     connectionString: env.DATABASE_URL,
   },
   tablesFilter: ["fantasyfive-t3_*"],
+  verbose: true,
 } satisfies Config;

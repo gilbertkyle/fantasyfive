@@ -1,9 +1,50 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "e57d62d1-9b3a-43b7-9ce9-e119ceb4b993",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "18ba247e-fd8e-485d-96a8-e4393a1c407a",
+  "prevId": "9d9826d4-a701-4995-b614-21f892a0f562",
   "tables": {
+    "defenses": {
+      "name": "defenses",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "team_id": {
+          "name": "team_id",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "week": {
+          "name": "week",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "season": {
+          "name": "season",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fantasy_points": {
+          "name": "fantasy_points",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "fantasy_teams": {
       "name": "fantasy_teams",
       "schema": "",
@@ -248,17 +289,23 @@
           "primaryKey": true,
           "notNull": true
         },
+        "player_id": {
+          "name": "player_id",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "season": {
           "name": "season",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "week": {
           "name": "week",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "completions": {
           "name": "completions",
@@ -386,6 +433,13 @@
           "notNull": false,
           "default": 0
         },
+        "rushing_fumbles_lost": {
+          "name": "rushing_fumbles_lost",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
         "rushing_first_downs": {
           "name": "rushing_first_downs",
           "type": "integer",
@@ -499,7 +553,17 @@
           "default": 0
         }
       },
-      "indexes": {},
+      "indexes": {
+        "player_weeks_player_id_week_season_index": {
+          "name": "player_weeks_player_id_week_season_index",
+          "columns": [
+            "player_id",
+            "week",
+            "season"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
@@ -510,7 +574,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar(20)",
+          "type": "varchar(64)",
           "primaryKey": true,
           "notNull": true
         },
@@ -614,7 +678,9 @@
         "DEF": "DEF",
         "FB": "FB",
         "T": "T",
-        "SS": "SS"
+        "SS": "SS",
+        "OLB": "OLB",
+        "CB": "CB"
       }
     }
   },

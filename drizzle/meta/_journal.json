@@ -5,15 +5,57 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1701825135565,
-      "tag": "0000_mature_captain_midlands",
+      "when": 1706049046348,
+      "tag": "0000_polite_warlock",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "5",
-      "when": 1701825860488,
-      "tag": "0001_confused_spiral",
+      "when": 1706136821747,
+      "tag": "0001_nervous_dust",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1706292899037,
+      "tag": "0002_flashy_ricochet",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1706297891012,
+      "tag": "0003_remarkable_inhumans",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1706299807040,
+      "tag": "0004_numerous_bug",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1706581165410,
+      "tag": "0005_stormy_runaways",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1706584719005,
+      "tag": "0006_loose_power_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1706656717793,
+      "tag": "0007_black_nocturne",
       "breakpoints": true
     }
   ]

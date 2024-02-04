@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "e57d62d1-9b3a-43b7-9ce9-e119ceb4b993",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "70ae08c7-451c-4a89-8789-7806aa9f1542",
+  "prevId": "bb759402-43c1-4a98-ad62-6f2b03371a80",
   "tables": {
     "fantasy_teams": {
       "name": "fantasy_teams",
@@ -248,17 +248,23 @@
           "primaryKey": true,
           "notNull": true
         },
+        "player_id": {
+          "name": "player_id",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "season": {
           "name": "season",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "week": {
           "name": "week",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "completions": {
           "name": "completions",
@@ -510,7 +516,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar(20)",
+          "type": "varchar(64)",
           "primaryKey": true,
           "notNull": true
         },
@@ -614,7 +620,9 @@
         "DEF": "DEF",
         "FB": "FB",
         "T": "T",
-        "SS": "SS"
+        "SS": "SS",
+        "OLB": "OLB",
+        "CB": "CB"
       }
     }
   },

@@ -1,0 +1,1 @@
+ALTER TABLE "picks" ADD COLUMN "fantasy_team_id" integer NOT NULL;

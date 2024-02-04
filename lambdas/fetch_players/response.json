@@ -1,0 +1,1 @@
+{"errorMessage": "'queryStringParameters'", "errorType": "KeyError", "requestId": "37febca7-b97e-478c-9f3e-b652162ce870", "stackTrace": ["  File \"/var/task/lambda.py\", line 8, in handler\n    request_data = event['queryStringParameters']\n"]}

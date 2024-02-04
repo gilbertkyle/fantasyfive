@@ -1,5 +1,5 @@
 import type { SSTConfig } from "sst";
-import { NextjsSite } from "sst/constructs";
+import { NextjsSite, Cron } from "sst/constructs";
 
 export default {
   config(_input) {
@@ -11,7 +11,10 @@ export default {
   stacks(app) {
     app.stack(function Site({ stack }) {
       const site = new NextjsSite(stack, "site");
-
+      /* new Cron(stack, "cron", {
+        schedule: "rate(1 minute)",
+        job: "src/lambda.handler",
+      }); */
       stack.addOutputs({
         SiteUrl: site.url,
       });

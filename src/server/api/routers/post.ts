@@ -18,9 +18,11 @@ export const postRouter = createTRPCRouter({
       // simulate a slow db call
       //await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      await ctx.db.insert(posts).values({
+      const data = await ctx.db.insert(posts).values({
         myData: input.myData,
       });
+      console.log("TheData: ", data);
+      return data;
     }),
 
   getLatest: publicProcedure.query(({ ctx }) => {
