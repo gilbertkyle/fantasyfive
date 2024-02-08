@@ -8,7 +8,7 @@ export const getCurrentWeek = () => {
   const BASE_DATE = dayjs(new Date(CURRENT_SEASON, 8, 27, 10, 0, 0));
   const now = dayjs();
   const daysDifference = now.diff(BASE_DATE, "day");
-  const week = Math.floor(daysDifference);
+  const week = Math.floor(daysDifference / 7);
   if (week > SEASON_LENGTH_IN_WEEKS) return SEASON_LENGTH_IN_WEEKS;
   if (week < 1) return 1;
   return week;

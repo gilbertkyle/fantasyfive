@@ -4,18 +4,7 @@ import { z } from "zod";
 import { getCurrentWeek, CURRENT_SEASON } from "~/settings";
 import { sql } from "drizzle-orm";
 
-const positions = [
-  "QB",
-  "RB",
-  "WR",
-  "TE",
-  "DEF",
-  "SS",
-  "FB",
-  "T",
-  "CB",
-  "OLB",
-] as const;
+const positions = ["QB", "RB", "WR", "TE", "DEF", "SS", "FB", "T", "CB", "OLB"] as const;
 
 const PlayerWeekDataSchema = z
   .object({
@@ -63,11 +52,9 @@ async function main() {
 
   const week = args[0] ?? getCurrentWeek().toString();
   const season = args[0] ?? CURRENT_SEASON;
-  const body = { week, season };
+  const body = JSON.stringify({ week, season });
 
-  const dataUrl = new URL(
-    "https://a7s7t3qyilx6x4poez4yyefk4y0dxmln.lambda-url.us-west-1.on.aws/",
-  );
+  const dataUrl = new URL("https://a7s7t3qyilx6x4poez4yyefk4y0dxmln.lambda-url.us-west-1.on.aws/");
   dataUrl.searchParams.set("week", week);
   const response = await fetch(dataUrl, {
     method: "POST",
@@ -100,7 +87,7 @@ async function main() {
     .values(playerWeekData)
     .onConflictDoUpdate({
       target: [playerWeeks.season, playerWeeks.week, playerWeeks.playerId],
-      set: { fantasyPoints: sql`excluded.fantasyPoints` },
+      set: { fantasyPoints: sql`excluded.fantasy_points` },
     });
 }
 
