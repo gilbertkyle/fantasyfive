@@ -6,6 +6,8 @@ import { AgGridReact } from "ag-grid-react";
 import { useUser } from "@clerk/nextjs";
 import { getCurrentWeek } from "~/settings";
 import { updatePick } from "~/app/_actions";
+import { useAction } from "next-safe-action/hooks";
+import toast from "react-hot-toast";
 
 import "ag-grid-community/styles/ag-grid.css"; // Core CSS
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
@@ -15,6 +17,16 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
   const gridRef = useRef();
   const week = getCurrentWeek();
   const { teams } = league;
+
+  const { execute, result } = useAction(updatePick, {
+    onSuccess(data, input, reset) {
+      console.log("data: ", data);
+      toast.success("Successful update!");
+    },
+    onError(error, input, reset) {
+      console.log("error: ", error);
+    },
+  });
 
   const myTeam = teams.find((team) => team.ownerId === userId) as FantasyTeamDetail;
 
@@ -27,6 +39,7 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
   const [columnDefs, setColumnDefs] = useState([
     {
       field: "week",
+      sort: "asc",
     },
     {
       headerName: "Quarterback",
@@ -37,7 +50,7 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
           editable: true,
           field: "qbInput",
           cellRenderer: (cell) => {
-            return cell.data.qbInput ? cell.data.qbInput.name : "";
+            return cell.data.qbInput ? cell.data.qbInput.name : cell.data.quarterback?.player?.name;
           },
           //valueGetter: "data.name",
           cellEditor: "agRichSelectCellEditor",
@@ -135,7 +148,7 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
     },
     {
       field: "Actions",
-      cellRenderer: (params) => <span onClick={() => updatePick(params.data)}>Hello!</span>,
+      cellRenderer: (params: any) => <span onClick={() => execute(params.data)}>Update Row</span>,
     },
   ]);
 

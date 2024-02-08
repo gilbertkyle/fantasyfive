@@ -1,5 +1,5 @@
 import React from "react";
-import { fetchACPlayers, fetchLeagueDetail } from "~/server/actions";
+import { fetchACPlayers, fetchLeagueDetail } from "~/app/_actions";
 import LeagueDetailTable from "~/app/_components/tables/LeagueDetailTable";
 import { currentUser } from "@clerk/nextjs";
 

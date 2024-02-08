@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from "react-hot-toast";
 
 import Navbar from "~/app/_components/Navbar";
 import "ag-grid-enterprise";
@@ -20,15 +21,12 @@ export const metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider>
       <html lang="en">
         <body className={`font-sans ${inter.variable}`}>
+          <Toaster />
           <TRPCReactProvider cookies={cookies().toString()}>
             <Navbar />
             {children}

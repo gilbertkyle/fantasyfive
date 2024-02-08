@@ -23,18 +23,7 @@ import {
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
 
-export const positionEnum = pgEnum("position", [
-  "QB",
-  "RB",
-  "WR",
-  "TE",
-  "DEF",
-  "FB",
-  "T",
-  "SS",
-  "OLB",
-  "CB",
-]);
+export const positionEnum = pgEnum("position", ["QB", "RB", "WR", "TE", "DEF", "FB", "T", "SS", "OLB", "CB"]);
 
 export const leagues = pgTable("leagues", {
   id: serial("id").primaryKey(),
@@ -77,16 +66,13 @@ export const leagueRelations = relations(leagues, ({ many }) => ({
   teams: many(fantasyTeams),
 }));
 
-export const fantasyTeamRelations = relations(
-  fantasyTeams,
-  ({ one, many }) => ({
-    league: one(leagues, {
-      fields: [fantasyTeams.leagueId],
-      references: [leagues.id],
-    }),
-    picks: many(picks),
+export const fantasyTeamRelations = relations(fantasyTeams, ({ one, many }) => ({
+  league: one(leagues, {
+    fields: [fantasyTeams.leagueId],
+    references: [leagues.id],
   }),
-);
+  picks: many(picks),
+}));
 
 export const teams = pgTable("teams", {
   id: serial("id").primaryKey(),
@@ -170,8 +156,9 @@ export const playerWeekRelations = relations(playerWeeks, ({ one, many }) => ({
   player: one(players, {
     fields: [playerWeeks.playerId],
     references: [players.id],
+    relationName: "player",
   }),
-  picks: many(picks),
+  //picks: many(picks, { relationName: "picks" }),
 }));
 
 export const leagueInvites = pgTable("league_invites", {
@@ -184,26 +171,32 @@ export const pickRelations = relations(picks, ({ one }) => ({
   quarterback: one(playerWeeks, {
     fields: [picks.quarterbackId],
     references: [playerWeeks.playerId],
+    relationName: "quarterback_pick",
   }),
   runningBack: one(playerWeeks, {
     fields: [picks.runningBackId],
     references: [playerWeeks.playerId],
+    relationName: "running_back_pick",
   }),
   wideReceiver: one(playerWeeks, {
     fields: [picks.wideReceiverId],
     references: [playerWeeks.playerId],
+    relationName: "wide_receiver_pick",
   }),
   tightEnd: one(playerWeeks, {
     fields: [picks.tightEndId],
     references: [playerWeeks.playerId],
+    relationName: "tight_end_pick",
   }),
   defense: one(defenses, {
     fields: [picks.defenseId],
     references: [defenses.id],
+    relationName: "defense_pick",
   }),
   fantasyTeam: one(fantasyTeams, {
     fields: [picks.fantasyTeamId],
     references: [fantasyTeams.id],
+    relationName: "fantasy_team",
   }),
 }));
 

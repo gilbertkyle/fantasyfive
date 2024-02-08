@@ -1,6 +1,6 @@
 "use server";
 import React from "react";
-import { fetchLeagues } from "~/server/actions";
+import { fetchLeagues } from "~/app/_actions";
 import LeaguesTable from "~/app/_components/tables/LeaguesTable";
 
 const Page = async () => {
