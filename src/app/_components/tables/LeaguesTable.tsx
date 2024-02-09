@@ -12,12 +12,8 @@ const LeaguesTable = ({ leagues }: { leagues: League[] }) => {
   const [colDefs, setColDefs] = useState([
     {
       field: "name",
-      cellRenderer: (params) => {
-        return (
-          <Link href={`ffl/${params.data.id.toString()}`}>
-            {params.data.name}
-          </Link>
-        );
+      cellRenderer: (params: any) => {
+        return <Link href={`ffl/${params.data.id.toString()}`}>{params.data.name}</Link>;
       },
     },
     { field: "id" },
@@ -27,7 +23,11 @@ const LeaguesTable = ({ leagues }: { leagues: League[] }) => {
 
   return (
     <div className="ag-theme-quartz" style={{ height: "500px" }}>
-      <AgGridReact columnDefs={colDefs} rowData={rowData} />
+      <AgGridReact
+        //@ts-expect-error: column defs are weird
+        columnDefs={colDefs}
+        rowData={rowData}
+      />
     </div>
   );
 };

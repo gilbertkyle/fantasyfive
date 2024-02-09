@@ -32,12 +32,6 @@ export const leagues = pgTable("leagues", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const leagueMembers = pgTable("league_members", {
-  id: serial("id").primaryKey(),
-  userId: varchar("user_id", { length: 64 }).notNull(),
-  leagueId: integer("league_id").notNull(),
-});
-
 export const fantasyTeams = pgTable("fantasy_teams", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 256 }),

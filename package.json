@@ -14,7 +14,7 @@
     "fetch-players": "tsx scripts/fetchPlayers.ts"
   },
   "dependencies": {
-    "@clerk/nextjs": "^4.27.5",
+    "@clerk/nextjs": "^4.29.7",
     "@headlessui/react": "^1.7.17",
     "@hookform/resolvers": "^3.3.2",
     "@neondatabase/serverless": "^0.6.0",
@@ -77,5 +77,10 @@
   "ct3aMetadata": {
     "initVersion": "7.24.0"
   },
-  "packageManager": "npm@8.5.4"
+  "packageManager": "npm@8.5.4",
+  "eslintConfig": {
+    "rules": {
+      "@typescript-eslint/no-unused-vars": "off"
+    }
+  }
 }

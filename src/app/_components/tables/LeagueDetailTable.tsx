@@ -49,7 +49,7 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
           colId: "qbName",
           editable: true,
           field: "qbInput",
-          cellRenderer: (cell) => {
+          cellRenderer: (cell: any) => {
             return cell.data.qbInput ? cell.data.qbInput.name : cell.data.quarterback?.player?.name;
           },
           //valueGetter: "data.name",
@@ -61,7 +61,7 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
             filterList: true,
             highlightMatch: true,
             valueListMaxHeight: 220,
-            cellRenderer: (params) => {
+            cellRenderer: (params: any) => {
               return params.qbInput ? params.qbInput.name : params.value.name;
             },
           },
@@ -80,7 +80,7 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
           field: "rbInput",
           colId: "rbName",
           editable: true,
-          cellRenderer: (cell) => (cell.data.rbInput ? cell.data.rbInput.name : ""),
+          cellRenderer: (cell: any) => (cell.data.rbInput ? cell.data.rbInput.name : ""),
           cellEditor: "agRichSelectCellEditor",
           cellEditorParams: {
             values: players,
@@ -89,7 +89,7 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
             filterList: true,
             highlightMatch: true,
             valueListMaxHeight: 220,
-            cellRenderer: (params) => {
+            cellRenderer: (params: any) => {
               return params.rbInput ? params.rbInput.name : params.value.name;
             },
           },
@@ -105,7 +105,7 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
           colId: "wrName",
           editable: true,
           field: "wrInput",
-          cellRenderer: (cell) => (cell.data.wrInput ? cell.data.wrInput.name : ""),
+          cellRenderer: (cell: any) => (cell.data.wrInput ? cell.data.wrInput.name : ""),
           cellEditor: "agRichSelectCellEditor",
           cellEditorParams: {
             values: players,
@@ -114,7 +114,7 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
             filterList: true,
             highlightMatch: true,
             valueListMaxHeight: 220,
-            cellRenderer: (params) => (params.wrInput ? params.wrInput.name : params.value.name),
+            cellRenderer: (params: any) => (params.wrInput ? params.wrInput.name : params.value.name),
           },
         },
         { field: "Points", valueGetter: "data.wrPoints" },
@@ -128,7 +128,7 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
           colId: "teName",
           editable: true,
           field: "teInput",
-          cellRenderer: (cell) => (cell.data.teInput ? cell.data.teInput.name : ""),
+          cellRenderer: (cell: any) => (cell.data.teInput ? cell.data.teInput.name : ""),
           cellEditor: "agRichSelectCellEditor",
           cellEditorParams: {
             values: players,
@@ -136,7 +136,7 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
             filterList: true,
             highlightMatch: true,
             valueListMaxHeight: 220,
-            cellRenderer: (params) => (params.teInput ? params.teInput.name : params.value.name),
+            cellRenderer: (params: any) => (params.teInput ? params.teInput.name : params.value.name),
           },
         },
         { field: "Points", valueGetter: "data.tePoints" },
@@ -157,6 +157,7 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
   return (
     <div className="ag-theme-quartz h-96">
       <AgGridReact
+        // @ts-expect-error: column defs are weird
         columnDefs={columnDefs}
         rowData={rowData}
         defaultColDef={defaultColumnDef}

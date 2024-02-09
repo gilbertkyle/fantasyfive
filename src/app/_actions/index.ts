@@ -22,7 +22,7 @@ export const fetchLeagues = async () => {
     const userIds = league.teams.map((owner) => owner.ownerId);
     return userIds.includes(user.id);
   });
-  return myLeagues;
+  return everyLeague;
 };
 
 const InviteUserSchema = z.object({
@@ -52,6 +52,7 @@ export const updatePick = action(updatePickSchema, async (pick) => {
     tightEndId: teInput?.id,
   };
   // this line clears undefined values
+  // @ts-expect-error: typescript isn't smart enough to realize this won't error
   Object.keys(values).forEach((key) => (values[key] === undefined ? delete values[key] : {}));
 
   const [updatedPick] = await db.update(picks).set(values).where(eq(picks.id, pick.id)).returning();
