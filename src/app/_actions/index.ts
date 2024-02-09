@@ -22,7 +22,7 @@ export const fetchLeagues = async () => {
     const userIds = league.teams.map((owner) => owner.ownerId);
     return userIds.includes(user.id);
   });
-  return everyLeague;
+  return myLeagues;
 };
 
 const InviteUserSchema = z.object({
