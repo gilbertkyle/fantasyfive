@@ -2,6 +2,7 @@
 
 import React from "react";
 import { UserButton, useUser, SignInButton } from "@clerk/nextjs";
+import Link from "next/link";
 
 const Navbar = () => {
   const { isSignedIn } = useUser();
@@ -10,7 +11,11 @@ const Navbar = () => {
       <div>
         <h2 className="">Fantasy Five</h2>
       </div>
-      <nav>{isSignedIn ? <UserButton /> : <SignInButton />}</nav>
+      <nav className="flex items-center">
+        <span className="p-2"><Link href={"/ffl"}>FFL</Link></span>
+        <span className="p-2">{isSignedIn ? <UserButton /> : <SignInButton />}</span>
+        
+        </nav>
     </header>
   );
 };

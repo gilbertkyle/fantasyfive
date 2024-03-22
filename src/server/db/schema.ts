@@ -14,6 +14,7 @@ import {
   real,
   primaryKey,
   uniqueIndex,
+  boolean,
 } from "drizzle-orm/pg-core";
 
 /**
@@ -23,11 +24,12 @@ import {
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
 
-export const positionEnum = pgEnum("position", ["QB", "RB", "WR", "TE", "DEF", "FB", "T", "SS", "OLB", "CB"]);
+export const positionEnum = pgEnum("position", ["QB", "RB", "WR", "TE", "DEF", "FB", "T", "SS", "OLB", "CB", "P"]);
 
 export const leagues = pgTable("leagues", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 128 }).notNull().unique(),
+  isPublic: boolean("is_public").default(false),
   ownerId: varchar("owner_id", { length: 64 }).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -72,11 +74,18 @@ export const teams = pgTable("teams", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 80 }),
   abbr: varchar("abbr", { length: 80 }),
-  color_1: varchar("color_1", { length: 16 }),
-  color_2: varchar("color_2", { length: 16 }),
-  color_3: varchar("color_3", { length: 16 }),
-  color_4: varchar("color_4", { length: 16 }),
-  logoUrl: varchar("logo_url"),
+  conference: varchar("conference", { length: 32 }),
+  division: varchar("division", { length: 32 }),
+  color1: varchar("color_1", { length: 16 }),
+  color2: varchar("color_2", { length: 16 }),
+  color3: varchar("color_3", { length: 16 }),
+  color4: varchar("color_4", { length: 16 }),
+  logoWikipedia: varchar("logo_wikipedia", { length: 256 }),
+  logoEspn: varchar("logo_espn", { length: 256 }),
+  wordmark: varchar("wordmark", { length: 256 }),
+  conferenceLogo: varchar("conference_logo", { length: 256 }),
+  leagueLogo: varchar("league_logo", { length: 256 }),
+  //logoSquared: varchar("logo_squared", { length: 256 }),
 });
 
 export const players = pgTable("players", {
@@ -101,7 +110,7 @@ export const playerWeeks = pgTable(
     season: integer("season").notNull(),
     week: integer("week").notNull(),
     completions: integer("completions").default(0),
-    attempts: integer("attempts").default(0),
+    passingAttempts: integer("passing_attempts").default(0),
     passingYards: integer("passing_yards").default(0),
     passingTds: integer("passing_tds").default(0),
     interceptions: integer("interceptions").default(0),
@@ -112,7 +121,7 @@ export const playerWeeks = pgTable(
     passingAirYards: integer("passing_air_yards").default(0),
     passingYardsAfterCatch: integer("passing_yards_after_catch").default(0),
     passingFirstDowns: integer("passing_first_downs").default(0),
-    passingEPA: doublePrecision("passing_EPA").default(0.0),
+    passingEPA: doublePrecision("passing_epa").default(0.0),
     passing2PtConversions: integer("passing_2_pt_conversions").default(0),
 
     carries: integer("carries").default(0),
@@ -121,7 +130,7 @@ export const playerWeeks = pgTable(
     rushingFumbles: integer("rushing_fumbles").default(0),
     rushingFumblesLost: integer("rushing_fumbles_lost").default(0),
     rushingFirstDowns: integer("rushing_first_downs").default(0),
-    rushingEPA: integer("rushing_EPA").default(0),
+    rushingEPA: doublePrecision("rushing_epa").default(0),
     rushing2PtConversions: integer("rushing_2_pt_conversions").default(0),
     receptions: integer("receptions").default(0),
     targets: integer("targets").default(0),
@@ -135,7 +144,7 @@ export const playerWeeks = pgTable(
     receiving2PtConversions: integer("receiving_2_pt_conversions").default(0),
     specialTeamsTds: integer("special_teams_tds").default(0),
     fantasyPoints: doublePrecision("fantasy_points").default(0.0),
-    fantasyPointsPPR: integer("fantasy_points_ppr").default(0.0),
+    fantasyPointsPPR: doublePrecision("fantasy_points_ppr").default(0.0),
   },
   (table) => ({
     unq: uniqueIndex().on(table.playerId, table.week, table.season),
@@ -194,13 +203,26 @@ export const pickRelations = relations(picks, ({ one }) => ({
   }),
 }));
 
-export const defenses = pgTable("defenses", {
-  id: serial("id").primaryKey(),
-  teamId: varchar("team_id", { length: 64 }),
-  week: integer("week").notNull(),
-  season: integer("season").notNull(),
-  fantasyPoints: real("fantasy_points").default(0.0),
-});
+export const defenses = pgTable(
+  "defenses",
+  {
+    id: serial("id").primaryKey(),
+    teamId: integer("team_id"),
+    week: integer("week").notNull(),
+    season: integer("season").notNull(),
+    fantasyPoints: real("fantasy_points").default(0.0),
+    sacks: real("sacks").default(0.0),
+    interceptions: integer("interceptions").default(0),
+    fumblesRecovered: integer("fumbles_recovered").default(0),
+    fumblesForced: integer("fumbles_forced").default(0),
+    defenseTds: integer("defense_tds").default(0),
+    safeties: integer("safeties").default(0),
+    specialTeamsTds: integer("special_teams_tds").default(0),
+  },
+  (table) => ({
+    unq: uniqueIndex().on(table.id, table.week, table.season),
+  }),
+);
 
 export const defenseRelations = relations(defenses, ({ one }) => ({
   team: one(teams, {
@@ -211,4 +233,23 @@ export const defenseRelations = relations(defenses, ({ one }) => ({
 
 export const teamRelations = relations(teams, ({ many }) => ({
   weeks: many(defenses),
+}));
+
+export const leagueRequests = pgTable(
+  "league_requests",
+  {
+    id: serial("id").primaryKey(),
+    leagueId: integer("league_id"),
+    from: varchar("from", { length: 256 }),
+  },
+  (table) => ({
+    unq: uniqueIndex().on(table.leagueId, table.from),
+  }),
+);
+
+export const leagueRequestRelations = relations(leagueRequests, ({ one }) => ({
+  league: one(leagues, {
+    fields: [leagueRequests.leagueId],
+    references: [leagues.id],
+  }),
 }));

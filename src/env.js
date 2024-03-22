@@ -13,13 +13,10 @@ export const env = createEnv({
     DATABASE_URL: z
       .string()
       .url()
-      .refine(
-        (str) => !str.includes("YOUR_MYSQL_URL_HERE"),
-        "You forgot to change the default URL",
-      ),
-    NODE_ENV: z
-      .enum(["development", "test", "production"])
-      .default("development"),
+      .refine((str) => !str.includes("YOUR_MYSQL_URL_HERE"), "You forgot to change the default URL"),
+    DEV_DATABASE_URL: z.string().url(),
+    NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+    FETCH_PLAYERS_URL: z.string().url(),
   },
 
   /**
@@ -38,6 +35,8 @@ export const env = createEnv({
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
+    FETCH_PLAYERS_URL: process.env.FETCH_PLAYERS_URL,
+    DEV_DATABASE_URL: process.env.DEV_DATABASE_URL,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

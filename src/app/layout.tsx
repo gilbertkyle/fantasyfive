@@ -3,9 +3,9 @@ import "~/styles/globals.css";
 import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
 
-import { TRPCReactProvider } from "~/trpc/react";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "react-hot-toast";
+import { Provider } from "~/app/_providers/QueryProvider";
 
 import Navbar from "~/app/_components/Navbar";
 import "ag-grid-enterprise";
@@ -24,15 +24,15 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body className={`font-sans ${inter.variable}`}>
-          <Toaster />
-          <TRPCReactProvider cookies={cookies().toString()}>
+      <Provider>
+        <html lang="en">
+          <body className={`font-sans ${inter.variable}`}>
+            <Toaster />
             <Navbar />
             {children}
-          </TRPCReactProvider>
-        </body>
-      </html>
+          </body>
+        </html>
+      </Provider>
     </ClerkProvider>
   );
 }

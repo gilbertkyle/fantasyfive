@@ -11,4 +11,10 @@ export type Player = InferSelectModel<typeof players>;
 
 export type League = InferSelectModel<typeof leagues> & {
   teams: FantasyTeam[];
+  owner: {
+    id: number,
+    username: string,
+    imageUrl: string,
+    externalUsername: string
+  }
 };

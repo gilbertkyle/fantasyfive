@@ -1,9 +1,109 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "9d9826d4-a701-4995-b614-21f892a0f562",
-  "prevId": "00940528-e95b-4739-9d1e-6d9a39abde20",
+  "id": "397c46c0-d437-4dc9-ba92-df52b45861d4",
+  "prevId": "03c1f7d7-4c3c-425e-a618-f9b8b67d02c0",
   "tables": {
+    "defenses": {
+      "name": "defenses",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "team_id": {
+          "name": "team_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "week": {
+          "name": "week",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "season": {
+          "name": "season",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fantasy_points": {
+          "name": "fantasy_points",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "sacks": {
+          "name": "sacks",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "interceptions": {
+          "name": "interceptions",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "fumbles_recovered": {
+          "name": "fumbles_recovered",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "fumbles_forced": {
+          "name": "fumbles_forced",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "defense_tds": {
+          "name": "defense_tds",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "safeties": {
+          "name": "safeties",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "special_teams_tds": {
+          "name": "special_teams_tds",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        }
+      },
+      "indexes": {
+        "defenses_id_week_season_index": {
+          "name": "defenses_id_week_season_index",
+          "columns": [
+            "id",
+            "week",
+            "season"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "fantasy_teams": {
       "name": "fantasy_teams",
       "schema": "",
@@ -80,8 +180,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "league_members": {
-      "name": "league_members",
+    "league_requests": {
+      "name": "league_requests",
       "schema": "",
       "columns": {
         "id": {
@@ -90,20 +190,29 @@
           "primaryKey": true,
           "notNull": true
         },
-        "user_id": {
-          "name": "user_id",
-          "type": "varchar(64)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "league_id": {
           "name": "league_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
+        },
+        "from": {
+          "name": "from",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "league_requests_league_id_from_index": {
+          "name": "league_requests_league_id_from_index",
+          "columns": [
+            "league_id",
+            "from"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
@@ -123,6 +232,13 @@
           "type": "varchar(128)",
           "primaryKey": false,
           "notNull": true
+        },
+        "is_public": {
+          "name": "is_public",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
         },
         "owner_id": {
           "name": "owner_id",
@@ -163,6 +279,18 @@
         },
         "season": {
           "name": "season",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "week": {
+          "name": "week",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fantasy_team_id": {
+          "name": "fantasy_team_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -273,8 +401,8 @@
           "notNull": false,
           "default": 0
         },
-        "attempts": {
-          "name": "attempts",
+        "passing_attempts": {
+          "name": "passing_attempts",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -350,8 +478,8 @@
           "notNull": false,
           "default": 0
         },
-        "passing_EPA": {
-          "name": "passing_EPA",
+        "passing_epa": {
+          "name": "passing_epa",
           "type": "double precision",
           "primaryKey": false,
           "notNull": false,
@@ -406,9 +534,9 @@
           "notNull": false,
           "default": 0
         },
-        "rushing_EPA": {
-          "name": "rushing_EPA",
-          "type": "integer",
+        "rushing_epa": {
+          "name": "rushing_epa",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": false,
           "default": 0
@@ -506,7 +634,7 @@
         },
         "fantasy_points_ppr": {
           "name": "fantasy_points_ppr",
-          "type": "integer",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": false,
           "default": 0
@@ -589,6 +717,18 @@
           "primaryKey": false,
           "notNull": false
         },
+        "conference": {
+          "name": "conference",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "division": {
+          "name": "division",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "color_1": {
           "name": "color_1",
           "type": "varchar(16)",
@@ -613,9 +753,33 @@
           "primaryKey": false,
           "notNull": false
         },
-        "logo_url": {
-          "name": "logo_url",
-          "type": "varchar",
+        "logo_wikipedia": {
+          "name": "logo_wikipedia",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "logo_espn": {
+          "name": "logo_espn",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "wordmark": {
+          "name": "wordmark",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "conference_logo": {
+          "name": "conference_logo",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "league_logo": {
+          "name": "league_logo",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": false
         }
@@ -639,7 +803,8 @@
         "T": "T",
         "SS": "SS",
         "OLB": "OLB",
-        "CB": "CB"
+        "CB": "CB",
+        "P": "P"
       }
     }
   },

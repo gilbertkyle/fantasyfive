@@ -1,17 +1,20 @@
 "use client";
 
 import React, { useState, useMemo, useRef } from "react";
-import type { League, FantasyTeamDetail, Player } from "~/server/db/types";
+import type { FantasyTeamDetail, Player, Pick } from "~/server/db/types";
 import { AgGridReact } from "ag-grid-react";
-import { useUser } from "@clerk/nextjs";
 import { getCurrentWeek } from "~/settings";
 import { updatePick } from "~/app/_actions";
 import { useAction } from "next-safe-action/hooks";
 import toast from "react-hot-toast";
+import type { fetchLeagueDetail } from "~/app/_actions";
+import type { ColDef, GridOptions } from "ag-grid-enterprise";
 
 import "ag-grid-community/styles/ag-grid.css"; // Core CSS
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
 import "ag-grid-enterprise";
+
+type League = Awaited<ReturnType<typeof fetchLeagueDetail>>;
 
 const LeagueDetailTable = ({ league, players, userId }: { league: League; players: Player[]; userId: string }) => {
   const gridRef = useRef();
@@ -19,12 +22,23 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
   const { teams } = league;
 
   const { execute, result } = useAction(updatePick, {
-    onSuccess(data, input, reset) {
+    /* onSuccess(data, input, reset) {
       console.log("data: ", data);
       toast.success("Successful update!");
     },
     onError(error, input, reset) {
-      console.log("error: ", error);
+      console.log(error);
+      toast.error("error");
+    }, */
+    onSettled(result, input, reset) {
+      const { data } = result;
+      if (!data?.error) {
+        toast.success("great");
+        return;
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const error: string[] = JSON.parse(data.error);
+      if (!error.length) toast.success("great!");
     },
   });
 
@@ -80,7 +94,8 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
           field: "rbInput",
           colId: "rbName",
           editable: true,
-          cellRenderer: (cell: any) => (cell.data.rbInput ? cell.data.rbInput.name : ""),
+          cellRenderer: (cell: any) =>
+            cell.data.rbInput ? cell.data.rbInput.name : cell.data.runningBack?.player?.name,
           cellEditor: "agRichSelectCellEditor",
           cellEditorParams: {
             values: players,
@@ -105,7 +120,8 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
           colId: "wrName",
           editable: true,
           field: "wrInput",
-          cellRenderer: (cell: any) => (cell.data.wrInput ? cell.data.wrInput.name : ""),
+          cellRenderer: (cell: any) =>
+            cell.data.wrInput ? cell.data.wrInput.name : cell.data.wideReceiver?.player?.name,
           cellEditor: "agRichSelectCellEditor",
           cellEditorParams: {
             values: players,
@@ -128,7 +144,7 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
           colId: "teName",
           editable: true,
           field: "teInput",
-          cellRenderer: (cell: any) => (cell.data.teInput ? cell.data.teInput.name : ""),
+          cellRenderer: (cell: any) => (cell.data.teInput ? cell.data.teInput.name : cell.data.tightEnd?.player?.name),
           cellEditor: "agRichSelectCellEditor",
           cellEditorParams: {
             values: players,
@@ -154,14 +170,17 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
 
   const [rowData, setRowData] = useState(myTeam.picks);
 
+  const gridOptions: GridOptions<(typeof myTeam.picks)[0]> = {
+    rowData: myTeam.picks,
+  };
+
   return (
     <div className="ag-theme-quartz h-96">
-      <AgGridReact
+      <AgGridReact<(typeof myTeam.picks)[0]>
         // @ts-expect-error: column defs are weird
         columnDefs={columnDefs}
         rowData={rowData}
         defaultColDef={defaultColumnDef}
-        //editType="fullRow"
       />
     </div>
   );

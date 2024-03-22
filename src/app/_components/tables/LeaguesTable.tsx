@@ -9,6 +9,7 @@ import "ag-grid-community/styles/ag-grid.css"; // Core CSS
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
 
 const LeaguesTable = ({ leagues }: { leagues: League[] }) => {
+  
   const [colDefs, setColDefs] = useState([
     {
       field: "name",
@@ -16,17 +17,18 @@ const LeaguesTable = ({ leagues }: { leagues: League[] }) => {
         return <Link href={`ffl/${params.data.id.toString()}`}>{params.data.name}</Link>;
       },
     },
-    { field: "id" },
-    { field: "ownerId" },
+    
+    { field: "owner.username", headerName: "Commissioner" },
   ]);
   const [rowData, setRowData] = useState(leagues);
 
   return (
-    <div className="ag-theme-quartz" style={{ height: "500px" }}>
+    <div className="ag-theme-quartz h-72">
       <AgGridReact
         //@ts-expect-error: column defs are weird
         columnDefs={colDefs}
         rowData={rowData}
+
       />
     </div>
   );

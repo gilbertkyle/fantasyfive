@@ -1,5 +1,5 @@
 import React from "react";
-import { fetchACPlayers, fetchLeagueDetail } from "~/app/_actions";
+import { fetchACPlayers, fetchLeagueDetail, fetchLeagueRequests } from "~/app/_actions";
 import LeagueDetailTable from "~/app/_components/tables/LeagueDetailTable";
 import { currentUser } from "@clerk/nextjs";
 
@@ -14,8 +14,9 @@ const page = async ({ params }: Props) => {
   const league = await fetchLeagueDetail(parseInt(leagueId));
   const players = await fetchACPlayers();
   const user = await currentUser();
+  const requests = await fetchLeagueRequests(league.id);
   if (!user) throw new Error("you should be logged in");
-  if (!league) throw new Error("no league found somehow");
+  console.log("db url: ", process.env);
   return (
     <div>
       <LeagueDetailTable league={league} players={players} userId={user.id} />

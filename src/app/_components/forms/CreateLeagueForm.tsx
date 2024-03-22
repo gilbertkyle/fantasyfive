@@ -12,6 +12,7 @@ const CreateLeagueForm = () => {
     resolver: zodResolver(createLeagueSchema),
     defaultValues: {
       name: "",
+      isPublic: false,
     },
   });
 
@@ -25,6 +26,10 @@ const CreateLeagueForm = () => {
       <div>
         <label htmlFor="name">Name</label>
         <input {...register("name")} />
+      </div>
+      <div>
+        <label htmlFor="isPublic">Public League?</label>
+        <input type="checkbox" {...register("isPublic")} />
       </div>
       <button type="submit">Create League</button>
     </form>

@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX IF NOT EXISTS "league_requests_league_id_from_index" ON "league_requests" ("league_id","from");

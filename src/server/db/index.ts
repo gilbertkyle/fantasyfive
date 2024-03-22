@@ -7,12 +7,7 @@ import { drizzle } from "drizzle-orm/neon-http";
 import { env } from "~/env";
 import * as schema from "./schema";
 
-/* export const db = drizzle(
-  new Client({
-    url: env.DATABASE_URL,
-  }).connection(),
-  { schema }
-); */
+const isDevEnv = env.NODE_ENV === "development";
 
 neonConfig.fetchConnectionCache = true;
 

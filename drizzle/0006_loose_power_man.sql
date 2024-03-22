@@ -1,1 +1,0 @@
-ALTER TABLE "picks" ADD COLUMN "week" integer NOT NULL;
