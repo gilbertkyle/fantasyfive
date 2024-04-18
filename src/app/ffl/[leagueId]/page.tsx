@@ -16,7 +16,6 @@ const page = async ({ params }: Props) => {
   const user = await currentUser();
   const requests = await fetchLeagueRequests(league.id);
   if (!user) throw new Error("you should be logged in");
-  console.log("db url: ", process.env);
   return (
     <div>
       <LeagueDetailTable league={league} players={players} userId={user.id} />

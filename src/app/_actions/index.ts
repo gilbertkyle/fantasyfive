@@ -10,6 +10,7 @@ import { z } from "zod";
 import { getCurrentWeek } from "~/settings";
 import { clerkClient } from "@clerk/nextjs/server";
 import { filterUserForClient } from "~/server/helpers/filterUserForClient";
+import { NeonDbError } from "@neondatabase/serverless";
 
 export const fetchLeagues = async () => {
   const user = await currentUser();
@@ -211,7 +212,21 @@ export const insertLeagueRequest = async (leagueId: number) => {
     leagueId,
     from: id,
   };
-  await db.insert(leagueRequests).values(data);
+  try {
+    const result = await db.insert(leagueRequests).values(data).returning({ id: leagueRequests.id });
+    const league = await db.query.leagues.findFirst({
+      where: (leagues, { eq }) => eq(leagues.id, leagueId),
+    });
+    if (!league) throw new Error("db error");
+    return league;
+  } catch (error) {
+    if (error instanceof NeonDbError) {
+      return { error: "You have already requested to be in that league." };
+    } else
+      return {
+        error: "unknown Error",
+      };
+  }
 };
 
 export const fetchPublicLeagues = async (name: string) => {

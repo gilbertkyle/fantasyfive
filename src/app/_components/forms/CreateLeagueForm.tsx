@@ -22,16 +22,18 @@ const CreateLeagueForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit((data) => onHandleSubmit(data))}>
+    <form className="rounded-sm border border-black/20 p-4" onSubmit={handleSubmit((data) => onHandleSubmit(data))}>
       <div>
-        <label htmlFor="name">Name</label>
-        <input {...register("name")} />
+        <label htmlFor="name">Name: </label>
+        <input className="rounded-md border border-gray-400/20" {...register("name")} />
       </div>
       <div>
         <label htmlFor="isPublic">Public League?</label>
-        <input type="checkbox" {...register("isPublic")} />
+        <input className="m-2" type="checkbox" {...register("isPublic")} />
       </div>
-      <button type="submit">Create League</button>
+      <button className="rounded-sm border border-black/70 bg-slate-200/20 p-[6px] shadow-sm" type="submit">
+        Create League
+      </button>
     </form>
   );
 };

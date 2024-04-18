@@ -46,7 +46,7 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
 
   const defaultColumnDef = useMemo(() => {
     return {
-      width: 100,
+      width: 120,
     };
   }, []);
 
@@ -164,7 +164,14 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
     },
     {
       field: "Actions",
-      cellRenderer: (params: any) => <span onClick={() => execute(params.data)}>Update Row</span>,
+      cellRenderer: (params: any) => (
+        <span
+          className="cursor-pointer rounded-sm border border-gray-400/40 p-2 shadow-sm"
+          onClick={() => execute(params.data)}
+        >
+          Update Row
+        </span>
+      ),
     },
   ]);
 
@@ -175,7 +182,7 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
   };
 
   return (
-    <div className="ag-theme-quartz h-96">
+    <div className="ag-theme-quartz h-screen">
       <AgGridReact<(typeof myTeam.picks)[0]>
         // @ts-expect-error: column defs are weird
         columnDefs={columnDefs}

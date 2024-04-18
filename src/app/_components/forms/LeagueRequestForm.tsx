@@ -7,6 +7,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "
 import { useQuery } from "@tanstack/react-query";
 import { fetchPublicLeagues, insertLeagueRequest } from "~/app/_actions";
 import { z } from "zod";
+import toast from "react-hot-toast";
 
 const fetchPublicLeaguesSchema = z.object({
   leagueId: z.number(),
@@ -14,7 +15,7 @@ const fetchPublicLeaguesSchema = z.object({
 
 const LeagueRequestForm = () => {
   const [leagueName, setLeagueName] = useState<string>("");
-  const { register, handleSubmit } = useForm({
+  const { register } = useForm({
     resolver: zodResolver(fetchPublicLeaguesSchema),
     defaultValues: {
       leagueId: null,
@@ -35,9 +36,20 @@ const LeagueRequestForm = () => {
     }, 1000);
   };
 
+  const handleSubmit = async (id: number) => {
+    const result = await insertLeagueRequest(id);
+
+    //@ts-expect-error typescript can't figure this out.
+    if (result.error) {
+      //@ts-expect-error Some error
+      toast.error(result.error);
+    } else {
+      toast.success("success");
+    }
+  };
+
   return (
     <form>
-      <div>{JSON.stringify(leagues, null, 2) ?? "nothing"}</div>
       <Command>
         <CommandInput placeholder="Search for public leagues..." onInput={handleInput} {...register("leagueId")} />
         <CommandEmpty>No one found</CommandEmpty>
@@ -46,7 +58,7 @@ const LeagueRequestForm = () => {
             <CommandItem key={league.id} value={league.name}>
               <div className="flex w-72 justify-between">
                 <span>{league.name}</span>
-                <span className="cursor-pointer" onClick={() => insertLeagueRequest(league.id)}>
+                <span className="cursor-pointer" onClick={() => handleSubmit(league.id)}>
                   Send invite
                 </span>
               </div>
