@@ -6,9 +6,11 @@ import { cookies } from "next/headers";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "react-hot-toast";
 import { Provider } from "~/app/_providers/QueryProvider";
+import ThemeContextProvider from "~/context/ThemeContext";
 
 import Navbar from "~/app/_components/Navbar";
 import "ag-grid-enterprise";
+import ThemeSwitch from "~/app/_components/ThemeSwitch";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,9 +29,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <Provider>
         <html lang="en">
           <body className={`font-sans ${inter.variable}`}>
-            <Toaster />
-            <Navbar />
-            {children}
+            <ThemeContextProvider>
+              <Toaster />
+              <Navbar />
+              {children}
+              <ThemeSwitch />
+            </ThemeContextProvider>
           </body>
         </html>
       </Provider>

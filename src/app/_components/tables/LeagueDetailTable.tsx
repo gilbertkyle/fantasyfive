@@ -22,15 +22,15 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
   const { teams } = league;
 
   const { execute, result } = useAction(updatePick, {
-    /* onSuccess(data, input, reset) {
+    onSuccess(data, input, reset) {
       console.log("data: ", data);
       toast.success("Successful update!");
     },
     onError(error, input, reset) {
       console.log(error);
       toast.error("error");
-    }, */
-    onSettled(result, input, reset) {
+    },
+    /* onSettled(result, input, reset) {
       const { data } = result;
       if (!data?.error) {
         toast.success("great");
@@ -39,7 +39,7 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const error: string[] = JSON.parse(data.error);
       if (!error.length) toast.success("great!");
-    },
+    }, */
   });
 
   const myTeam = teams.find((team) => team.ownerId === userId) as FantasyTeamDetail;

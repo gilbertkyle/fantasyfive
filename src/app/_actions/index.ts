@@ -83,7 +83,6 @@ export const updatePick = action(updatePickSchema, async (pick) => {
   Object.keys(values).forEach((key) => (values[key] === undefined ? delete values[key] : {}));
 
   // now gotta check for duplicate picks
-
   const myTeam = await db.query.fantasyTeams.findFirst({
     columns: {},
     with: {
@@ -250,4 +249,23 @@ export const fetchLeagueRequests = async (leagueId: number) => {
     .from(leagueRequests)
     .innerJoin(leagues, eq(leagues.id, leagueRequests.leagueId))
     .where(eq(leagues.ownerId, user.id));
+};
+
+export const fetchOutgoingRequests = async () => {
+  const user = await currentUser();
+  if (!user) return [];
+  //return await db.select().from(leagueRequests).where(eq(leagueRequests.from, user.id));
+  return await db.query.leagueRequests.findMany({
+    where: (leagueRequests) => eq(leagueRequests.from, user.id),
+    with: {
+      league: true,
+    },
+  });
+};
+
+export const deleteOutgoingRequest = async (id: number) => {
+  await db.delete(leagueRequests).where(eq(leagueRequests.id, id));
+  await new Promise((resolve) => setTimeout(resolve, 700));
+  revalidatePath("/profile");
+  return;
 };

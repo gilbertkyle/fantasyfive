@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import FFLDropdownMenu from "./FFLDropdownMenu";
 
 const Navbar = () => {
   const { isSignedIn } = useUser();
@@ -20,6 +21,7 @@ const Navbar = () => {
         <h2 className="">Fantasy Five</h2>
       </div>
       <nav className="flex items-center">
+        <FFLDropdownMenu />
         <DropdownMenu>
           <DropdownMenuTrigger>FFL</DropdownMenuTrigger>
           <DropdownMenuContent>
@@ -32,9 +34,16 @@ const Navbar = () => {
           </DropdownMenuContent>
         </DropdownMenu>
         <span className="p-2">
-          <Link href={"/ffl"}>FFL</Link>
+          {isSignedIn ? (
+            <span data-testid="user-button">
+              <UserButton />
+            </span>
+          ) : (
+            <span data-testid="signin-button">
+              <SignInButton />
+            </span>
+          )}
         </span>
-        <span className="p-2">{isSignedIn ? <UserButton /> : <SignInButton />}</span>
       </nav>
     </header>
   );

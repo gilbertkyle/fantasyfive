@@ -41,16 +41,17 @@ const LeagueRequestForm = () => {
 
     //@ts-expect-error typescript can't figure this out.
     if (result.error) {
-      //@ts-expect-error Some error
+      //@ts-expect-error typescript is dummer than me
       toast.error(result.error);
     } else {
-      toast.success("success");
+      // @ts-expect-error name is guaranteed to exist
+      toast.success(`Request sent to ${result.name}`);
     }
   };
 
   return (
     <form>
-      <Command>
+      <Command className="w-96">
         <CommandInput placeholder="Search for public leagues..." onInput={handleInput} {...register("leagueId")} />
         <CommandEmpty>No one found</CommandEmpty>
         <CommandGroup>

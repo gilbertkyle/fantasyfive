@@ -8,10 +8,27 @@ import type { fetchPlayers } from "~/app/_actions";
 
 type Player = Awaited<ReturnType<typeof fetchPlayers>>;
 
-import React from "react";
+import React, { useState } from "react";
+import { AgGridReact } from "ag-grid-react";
 
 const PlayersTable = ({ players }: { players: Player[] }) => {
-  return <div></div>;
+  const [columnDefs, setColumnDefs] = useState([
+    {
+      field: "name",
+    },
+    {
+      field: "position",
+    },
+    {
+      field: "fantasyPoints",
+    },
+  ]);
+
+  return (
+    <div className="ag-theme-quartz h-screen">
+      <AgGridReact></AgGridReact>
+    </div>
+  );
 };
 
 export default PlayersTable;
