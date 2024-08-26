@@ -30,10 +30,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <html lang="en">
           <body className={`font-sans ${inter.variable}`}>
             <ThemeContextProvider>
-              <Toaster />
-              <Navbar />
-              {children}
-              <ThemeSwitch />
+              <div className="min-h-screen transition-all dark:bg-slate-800">
+                <Toaster />
+                <Navbar />
+                {children}
+                <ThemeSwitch />
+              </div>
             </ThemeContextProvider>
           </body>
         </html>

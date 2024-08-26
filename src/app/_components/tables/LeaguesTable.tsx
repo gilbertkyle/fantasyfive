@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import { AgGridReact } from "ag-grid-react";
-//import type { League } from "~/server/db/types";
 import Link from "next/link";
 import type { fetchLeagues } from "~/app/_actions";
+import { useTheme } from "~/context/ThemeContext";
 
 type League = Awaited<ReturnType<typeof fetchLeagues>>[number];
 
@@ -13,9 +13,11 @@ type Props = {
 };
 
 import "ag-grid-community/styles/ag-grid.css"; // Core CSS
-import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
+import "ag-grid-community/styles/ag-theme-quartz.css";
 
 const LeaguesTable = ({ leagues }: Props) => {
+  const { theme } = useTheme();
+  const isDarkMode = theme === "dark";
   const [colDefs, setColDefs] = useState([
     {
       field: "name",
@@ -29,7 +31,7 @@ const LeaguesTable = ({ leagues }: Props) => {
   const [rowData, setRowData] = useState(leagues);
 
   return (
-    <div className="ag-theme-quartz h-72">
+    <div className={`h-72 transition-all ${isDarkMode ? "ag-theme-quartz-dark" : "ag-theme-quartz"}`}>
       <AgGridReact
         //@ts-expect-error: column defs are weird
         columnDefs={colDefs}

@@ -8,7 +8,9 @@ import { updatePick } from "~/app/_actions";
 import { useAction } from "next-safe-action/hooks";
 import toast from "react-hot-toast";
 import type { fetchLeagueDetail } from "~/app/_actions";
-import type { ColDef, GridOptions } from "ag-grid-enterprise";
+import type { ColDef, ColGroupDef, GridOptions, IRichCellEditorParams } from "ag-grid-community";
+import { useTheme } from "~/context/ThemeContext";
+import { useMediaQuery } from "~/lib/utils";
 
 import "ag-grid-community/styles/ag-grid.css"; // Core CSS
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
@@ -20,6 +22,8 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
   const gridRef = useRef();
   const week = getCurrentWeek();
   const { teams } = league;
+  const { theme } = useTheme();
+  const isMobile = useMediaQuery(768);
 
   const { execute, result } = useAction(updatePick, {
     onSuccess(data, input, reset) {
@@ -44,11 +48,23 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
 
   const myTeam = teams.find((team) => team.ownerId === userId) as FantasyTeamDetail;
 
+  const QB_LIST = useMemo(() => players.filter((player) => player.position === "QB"), []);
+  const RB_LIST = useMemo(() => players.filter((player) => player.position === "RB"), []);
+  const WR_LIST = useMemo(() => players.filter((player) => player.position === "WR"), []);
+  const TE_LIST = useMemo(() => players.filter((player) => player.position === "TE"), []);
+
   const defaultColumnDef = useMemo(() => {
     return {
       width: 120,
     };
   }, []);
+
+  const parseInput = (input: string | null) => {
+    if (input == null) return "";
+    const id = input.split("%")[1];
+    const player = players.find((player) => player.id === id);
+    return player ?? "";
+  };
 
   const [columnDefs, setColumnDefs] = useState([
     {
@@ -64,19 +80,21 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
           editable: true,
           field: "qbInput",
           cellRenderer: (cell: any) => {
-            return cell.data.qbInput ? cell.data.qbInput.name : cell.data.quarterback?.player?.name;
+            return cell.data.qbInput ? cell.data.qbInput.split("%")[0] : cell.data.quarterback?.player?.name;
           },
-          //valueGetter: "data.name",
           cellEditor: "agRichSelectCellEditor",
           cellEditorParams: {
-            values: players,
-            searchType: "match",
+            values: QB_LIST.map((player) => `${player.name}%${player.id}`),
+            //formatValue: (value: any) => value?.name,
+            searchType: "matchAny",
             allowTyping: true,
             filterList: true,
             highlightMatch: true,
             valueListMaxHeight: 220,
-            cellRenderer: (params: any) => {
-              return params.qbInput ? params.qbInput.name : params.value.name;
+            useFormatter: true,
+            cellRenderer: (params: { value: string }) => {
+              const value = params.value.split("%")[0];
+              return value;
             },
           },
         },
@@ -98,14 +116,16 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
             cell.data.rbInput ? cell.data.rbInput.name : cell.data.runningBack?.player?.name,
           cellEditor: "agRichSelectCellEditor",
           cellEditorParams: {
-            values: players,
-            searchType: "match",
+            values: RB_LIST.map((player) => `${player.name}%${player.id}`),
+            searchType: "matchAny",
             allowTyping: true,
             filterList: true,
             highlightMatch: true,
             valueListMaxHeight: 220,
-            cellRenderer: (params: any) => {
-              return params.rbInput ? params.rbInput.name : params.value.name;
+            useFormatter: true,
+            cellRenderer: (params: { value: string }) => {
+              const value = params.value.split("%")[0];
+              return value;
             },
           },
         },
@@ -124,7 +144,7 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
             cell.data.wrInput ? cell.data.wrInput.name : cell.data.wideReceiver?.player?.name,
           cellEditor: "agRichSelectCellEditor",
           cellEditorParams: {
-            values: players,
+            values: WR_LIST.map((player) => `${player.name}%${player.id}`),
             searchType: "match",
             allowTyping: true,
             filterList: true,
@@ -147,7 +167,7 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
           cellRenderer: (cell: any) => (cell.data.teInput ? cell.data.teInput.name : cell.data.tightEnd?.player?.name),
           cellEditor: "agRichSelectCellEditor",
           cellEditorParams: {
-            values: players,
+            values: TE_LIST.map((player) => `${player.name}%${player.id}`),
             allowTyping: true,
             filterList: true,
             highlightMatch: true,
@@ -167,7 +187,14 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
       cellRenderer: (params: any) => (
         <span
           className="cursor-pointer rounded-sm border border-gray-400/40 p-2 shadow-sm"
-          onClick={() => execute(params.data)}
+          onClick={() => {
+            //console.log(params.data)
+            /* const qbString = params?.data?.qbInput;
+            const qbCode = qbString.split("%")[1];
+            const qb = players.find((player) => player.id === qbCode);
+            console.log(qb); */
+            const qb = parseInput(params.data?.qbInput);
+          }}
         >
           Update Row
         </span>
@@ -182,7 +209,7 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
   };
 
   return (
-    <div className="ag-theme-quartz h-screen">
+    <div className={`${theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz"} h-screen`}>
       <AgGridReact<(typeof myTeam.picks)[0]>
         // @ts-expect-error: column defs are weird
         columnDefs={columnDefs}

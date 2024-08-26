@@ -66,11 +66,32 @@
   }
 }
  
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+.custom-select-cell-editor {
+  position: relative;
+}
+
+.custom-select-cell-editor input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.custom-select-cell-editor .options-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  z-index: 1;
+}
+
+.custom-select-cell-editor .options-list li {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.custom-select-cell-editor .options-list li:hover {
+  background-color: #f0f0f0;
 }

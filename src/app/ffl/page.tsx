@@ -6,7 +6,7 @@ import LeaguesTable from "~/app/_components/tables/LeaguesTable";
 const Page = async () => {
   const leagues = await fetchLeagues();
   return (
-    <div>
+    <div className="max-w-full">
       <LeaguesTable leagues={leagues} />
     </div>
   );

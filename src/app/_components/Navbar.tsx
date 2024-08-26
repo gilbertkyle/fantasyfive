@@ -16,23 +16,12 @@ import FFLDropdownMenu from "./FFLDropdownMenu";
 const Navbar = () => {
   const { isSignedIn } = useUser();
   return (
-    <header className="bg-neutral flex h-16 w-full items-center justify-between border">
-      <div>
-        <h2 className="">Fantasy Five</h2>
+    <header className="bg-neutral flex h-16 w-full items-center justify-between border px-4 md:px-20">
+      <div className="">
+        <h2 className="text-xl tracking-wide dark:text-stone-200">Fantasy Five</h2>
       </div>
       <nav className="flex items-center">
         <FFLDropdownMenu />
-        <DropdownMenu>
-          <DropdownMenuTrigger>FFL</DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel>My League</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Item</DropdownMenuItem>
-            <DropdownMenuItem>
-              <Link href={"/"}>test</Link>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
         <span className="p-2">
           {isSignedIn ? (
             <span data-testid="user-button">

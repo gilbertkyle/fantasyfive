@@ -17,11 +17,15 @@ export default function FFLDropdownMenu() {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>
-            <Link href={"/ffl"}>FFL</Link>
-          </NavigationMenuTrigger>
+          <NavigationMenuTrigger className="transition-all dark:text-stone-200">FFL</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="flex w-36 flex-col p-2">
+              <li>
+                <NavigationMenuLink asChild className="py-1 text-lg font-semibold">
+                  <Link href={"/ffl"}>Home</Link>
+                </NavigationMenuLink>
+              </li>
+              <hr className="py-1" />
               <li className="">
                 <NavigationMenuLink asChild className={""}>
                   <Link href={"/ffl/league/create"}>Create a league</Link>

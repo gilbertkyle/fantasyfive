@@ -21,7 +21,8 @@ const CreateLeagueForm = () => {
     reset();
   };
 
-  return (
+  return ( 
+     
     <form className="rounded-sm border border-black/20 p-4" onSubmit={handleSubmit((data) => onHandleSubmit(data))}>
       <div>
         <label htmlFor="name">Name: </label>
