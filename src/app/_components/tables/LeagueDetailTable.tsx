@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useRef } from "react";
-import type { FantasyTeamDetail, Player, Pick } from "~/server/db/types";
+import type { FantasyTeamDetail, Player, Pick, Team } from "~/server/db/types";
 import { AgGridReact } from "ag-grid-react";
 import { getCurrentWeek } from "~/settings";
 import { updatePick } from "~/app/_actions";
@@ -18,19 +18,29 @@ import "ag-grid-enterprise";
 
 type League = Awaited<ReturnType<typeof fetchLeagueDetail>>;
 
-const LeagueDetailTable = ({ league, players, userId }: { league: League; players: Player[]; userId: string }) => {
+const LeagueDetailTable = ({
+  league,
+  players,
+  userId,
+  teams,
+}: {
+  league: League;
+  players: Player[];
+  userId: string;
+  teams: Team[];
+}) => {
   const gridRef = useRef();
   const week = getCurrentWeek();
-  const { teams } = league;
+  const { teams: fantasyTeams } = league;
   const { theme } = useTheme();
   const isMobile = useMediaQuery(768);
 
   const { execute, result } = useAction(updatePick, {
-    onSuccess(data, input, reset) {
+    onSuccess({ data, input }) {
       console.log("data: ", data);
       toast.success("Successful update!");
     },
-    onError(error, input, reset) {
+    onError({ error, input }) {
       console.log(error);
       toast.error("error");
     },
@@ -46,7 +56,12 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
     }, */
   });
 
-  const myTeam = teams.find((team) => team.ownerId === userId) as FantasyTeamDetail;
+  const myTeam = fantasyTeams.find((team) => team.ownerId === userId) as FantasyTeamDetail;
+  console.log(
+    "teams: ",
+    //myTeam.picks.find((pick) => pick.week == 3),
+    myTeam.picks,
+  );
 
   const QB_LIST = useMemo(() => players.filter((player) => player.position === "QB"), []);
   const RB_LIST = useMemo(() => players.filter((player) => player.position === "RB"), []);
@@ -60,10 +75,17 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
   }, []);
 
   const parseInput = (input: string | null) => {
-    if (input == null) return "";
+    if (input == null) return null;
     const id = input.split("%")[1];
     const player = players.find((player) => player.id === id);
-    return player ?? "";
+    return player ?? undefined;
+  };
+
+  const parseDefenseInput = (input: string | null) => {
+    if (input == null) return null;
+    const id = Number(input.split("%")[1]);
+    const team = teams.find((team) => team.id === id);
+    return team;
   };
 
   const [columnDefs, setColumnDefs] = useState([
@@ -113,7 +135,7 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
           colId: "rbName",
           editable: true,
           cellRenderer: (cell: any) =>
-            cell.data.rbInput ? cell.data.rbInput.name : cell.data.runningBack?.player?.name,
+            cell.data.rbInput ? cell.data.rbInput.split("%")[0] : cell.data.runningBack?.player?.name,
           cellEditor: "agRichSelectCellEditor",
           cellEditorParams: {
             values: RB_LIST.map((player) => `${player.name}%${player.id}`),
@@ -141,16 +163,19 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
           editable: true,
           field: "wrInput",
           cellRenderer: (cell: any) =>
-            cell.data.wrInput ? cell.data.wrInput.name : cell.data.wideReceiver?.player?.name,
+            cell.data.wrInput ? cell.data.wrInput.split("%")[0] : cell.data.wideReceiver?.player?.name,
           cellEditor: "agRichSelectCellEditor",
           cellEditorParams: {
             values: WR_LIST.map((player) => `${player.name}%${player.id}`),
-            searchType: "match",
+            searchType: "matchAny",
             allowTyping: true,
             filterList: true,
             highlightMatch: true,
             valueListMaxHeight: 220,
-            cellRenderer: (params: any) => (params.wrInput ? params.wrInput.name : params.value.name),
+            cellRenderer: (params: { value: string }) => {
+              const value = params.value.split("%")[0];
+              return value;
+            },
           },
         },
         { field: "Points", valueGetter: "data.wrPoints" },
@@ -164,15 +189,20 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
           colId: "teName",
           editable: true,
           field: "teInput",
-          cellRenderer: (cell: any) => (cell.data.teInput ? cell.data.teInput.name : cell.data.tightEnd?.player?.name),
+          cellRenderer: (cell: any) =>
+            cell.data.teInput ? cell.data.teInput.split("%")[0] : cell.data.tightEnd?.player?.name,
           cellEditor: "agRichSelectCellEditor",
           cellEditorParams: {
             values: TE_LIST.map((player) => `${player.name}%${player.id}`),
+            searchType: "matchAny",
             allowTyping: true,
             filterList: true,
             highlightMatch: true,
             valueListMaxHeight: 220,
-            cellRenderer: (params: any) => (params.teInput ? params.teInput.name : params.value.name),
+            cellRenderer: (params: { value: string }) => {
+              const value = params.value.split("%")[0];
+              return value;
+            },
           },
         },
         { field: "Points", valueGetter: "data.tePoints" },
@@ -180,20 +210,50 @@ const LeagueDetailTable = ({ league, players, userId }: { league: League; player
     },
     {
       headerName: "Defense",
-      children: [{ field: "Team" }, { field: "Points" }],
+      children: [
+        {
+          headerName: "Defense",
+          colId: "defenseName",
+          editable: true,
+          field: "defenseInput",
+          cellRenderer: (cell: any) =>
+            cell.data.defenseInput ? cell.data.defenseInput.split("%") : cell.data.defense?.team?.name,
+          cellEditor: "agRichSelectCellEditor",
+          cellEditorParams: {
+            values: teams.map((team) => `${team.name}%${team.id}`),
+            searchType: "matchAny",
+            allowTyping: true,
+            filterList: true,
+            highlightMatch: true,
+            valueListMaxHeight: 220,
+            cellRenderer: (params: { value: string }) => {
+              const value = params.value.split("%")[0];
+              return value;
+            },
+          },
+        },
+
+        { field: "Points" },
+      ],
     },
     {
       field: "Actions",
       cellRenderer: (params: any) => (
         <span
           className="cursor-pointer rounded-sm border border-gray-400/40 p-2 shadow-sm"
-          onClick={() => {
-            //console.log(params.data)
-            /* const qbString = params?.data?.qbInput;
-            const qbCode = qbString.split("%")[1];
-            const qb = players.find((player) => player.id === qbCode);
-            console.log(qb); */
+          onClick={async () => {
             const qb = parseInput(params.data?.qbInput);
+            const rb = parseInput(params.data?.rbInput);
+            const wr = parseInput(params.data?.wrInput);
+            const te = parseInput(params.data?.teInput);
+            const defense = parseDefenseInput(params.data?.defenseInput);
+            params.data.qbInput = qb;
+            params.data.rbInput = rb;
+            params.data.wrInput = wr;
+            params.data.teInput = te;
+            params.data.defenseInput = defense;
+            console.log("params: ", params.data);
+            execute(params.data);
           }}
         >
           Update Row

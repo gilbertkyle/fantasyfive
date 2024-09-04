@@ -5,12 +5,13 @@ import { db } from "~/server/db";
 import { fantasyTeams, leagueInvites, leagueRequests, picks, playerWeeks, players, leagues } from "~/server/db/schema";
 import { currentUser } from "@clerk/nextjs";
 import { eq, sql } from "drizzle-orm";
-import { action } from "~/lib/safe-action";
+import { actionClient } from "~/lib/safe-action";
 import { z } from "zod";
 import { getCurrentWeek } from "~/settings";
 import { clerkClient } from "@clerk/nextjs/server";
 import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 import { NeonDbError } from "@neondatabase/serverless";
+import { inviteUserSchema } from "../_schemata/invitePlayerSchema";
 
 export const fetchLeagues = async () => {
   const user = await currentUser();
@@ -51,32 +52,35 @@ const InviteUserSchema = z.object({
   leagueId: z.number(),
 });
 
-export const inviteUser = action(InviteUserSchema, async (invite) => {
+export const inviteUser = actionClient.schema(inviteUserSchema).action(async ({ parsedInput: invite }) => {
   const [newInvite] = await db.insert(leagueInvites).values(invite).returning();
   return newInvite;
 });
 
 const updatePickSchema = z.object({
   id: z.number(),
-  qbInput: z.object({ id: z.string() }).optional(),
-  rbInput: z.object({ id: z.string() }).optional(),
-  wrInput: z.object({ id: z.string() }).optional(),
-  teInput: z.object({ id: z.string() }).optional(),
+  qbInput: z.object({ id: z.string() }).optional().nullable(),
+  rbInput: z.object({ id: z.string() }).optional().nullable(),
+  wrInput: z.object({ id: z.string() }).optional().nullable(),
+  teInput: z.object({ id: z.string() }).optional().nullable(),
+  defenseInput: z.object({ id: z.number() }).optional().nullable(),
   fantasyTeamId: z.number(),
   season: z.number(),
   week: z.number(),
 });
 
-export const updatePick = action(updatePickSchema, async (pick) => {
+export const updatePick = actionClient.schema(updatePickSchema).action(async ({ parsedInput: pick }) => {
+  console.log("hello");
   const user = await currentUser();
   if (!user) throw new Error("you should be logged in");
 
-  const { qbInput, rbInput, wrInput, teInput } = pick;
+  const { qbInput, rbInput, wrInput, teInput, defenseInput } = pick;
   const values = {
     quarterbackId: qbInput?.id,
     runningBackId: rbInput?.id,
     wideReceiverId: wrInput?.id,
     tightEndId: teInput?.id,
+    defenseId: defenseInput?.id,
   };
   // this line clears undefined values
   // @ts-expect-error: typescript isn't smart enough to realize this won't error
@@ -113,10 +117,12 @@ export const updatePick = action(updatePickSchema, async (pick) => {
     }
   });
 
-  if (errors.length)
+  if (errors.length) {
+    console.log("errors: ", errors);
     return {
       error: JSON.stringify(errors),
     };
+  }
 
   const [updatedPick] = await db.update(picks).set(values).where(eq(picks.id, pick.id)).returning();
   console.log("got here: ", updatedPick);
@@ -124,8 +130,14 @@ export const updatePick = action(updatePickSchema, async (pick) => {
 });
 
 export const fetchACPlayers = async () => {
+  // function that grabs player data for the autocomplete in the pick table
   const players = await db.query.players.findMany();
   return players;
+};
+
+export const fetchACTeams = async () => {
+  const teams = await db.query.teams.findMany();
+  return teams;
 };
 
 export const fetchLeagueDetail = async (id: number) => {
@@ -155,6 +167,11 @@ export const fetchLeagueDetail = async (id: number) => {
               tightEnd: {
                 with: {
                   player: true,
+                },
+              },
+              defense: {
+                with: {
+                  team: true,
                 },
               },
             },

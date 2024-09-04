@@ -54,7 +54,7 @@ export const picks = pgTable("picks", {
   wrPoints: real("wr_points").default(0.0),
   tightEndId: varchar("tight_end_id", { length: 64 }),
   tePoints: real("te_points").default(0.0),
-  defenseId: varchar("defense_id", { length: 64 }),
+  defenseId: integer("defense_id"),
   defensePoints: real("defense_points").default(0.0),
 });
 
@@ -71,6 +71,7 @@ export const fantasyTeamRelations = relations(fantasyTeams, ({ one, many }) => (
 }));
 
 export const teams = pgTable("teams", {
+  // table for the team, NOT for the defense week
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 80 }),
   abbr: varchar("abbr", { length: 80 }),
@@ -193,7 +194,7 @@ export const pickRelations = relations(picks, ({ one }) => ({
   }),
   defense: one(defenses, {
     fields: [picks.defenseId],
-    references: [defenses.id],
+    references: [defenses.teamId],
     relationName: "defense_pick",
   }),
   fantasyTeam: one(fantasyTeams, {

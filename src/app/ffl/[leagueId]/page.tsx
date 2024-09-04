@@ -1,5 +1,5 @@
 import React from "react";
-import { fetchACPlayers, fetchLeagueDetail, fetchLeagueRequests } from "~/app/_actions";
+import { fetchACPlayers, fetchLeagueDetail, fetchLeagueRequests, fetchACTeams } from "~/app/_actions";
 import LeagueDetailTable from "~/app/_components/tables/LeagueDetailTable";
 import { currentUser } from "@clerk/nextjs";
 
@@ -15,10 +15,11 @@ const page = async ({ params }: Props) => {
   const players = await fetchACPlayers();
   const user = await currentUser();
   const requests = await fetchLeagueRequests(league.id);
+  const teams = await fetchACTeams();
   if (!user) throw new Error("you should be logged in");
   return (
     <div>
-      <LeagueDetailTable league={league} players={players} userId={user.id} />
+      <LeagueDetailTable league={league} players={players} userId={user.id} teams={teams} />
     </div>
   );
 };

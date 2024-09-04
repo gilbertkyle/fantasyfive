@@ -1,0 +1,1 @@
+ALTER TABLE "picks" ALTER COLUMN "defense_id" SET DATA TYPE integer USING (defense_id::integer);

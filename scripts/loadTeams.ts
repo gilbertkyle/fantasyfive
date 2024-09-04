@@ -45,7 +45,6 @@ const teamsSchema = z.array(teamSchema);
 
 async function main() {
   const rawData = fs.readFileSync("scripts/data.json", "utf-8");
-
   const data = JSON.parse(rawData);
   const teamData = teamsSchema.safeParse(data);
   if (!teamData.success) console.log(teamData.error);
