@@ -7,6 +7,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "
 import { useQuery } from "@tanstack/react-query";
 import { fetchPublicLeagues, insertLeagueRequest } from "~/app/_actions";
 import { z } from "zod";
+import { Button } from "~/components/ui/button";
 import toast from "react-hot-toast";
 
 const fetchPublicLeaguesSchema = z.object({
@@ -51,8 +52,13 @@ const LeagueRequestForm = () => {
 
   return (
     <form>
-      <Command className="w-96">
-        <CommandInput placeholder="Search for public leagues..." onInput={handleInput} {...register("leagueId")} />
+      <Command className="w-96 dark:bg-slate-800">
+        <CommandInput
+          className="bg-inherit"
+          placeholder="Search for public leagues..."
+          onInput={handleInput}
+          {...register("leagueId")}
+        />
         <CommandEmpty>No one found</CommandEmpty>
         <CommandGroup>
           {leagues?.map((league) => (
@@ -67,7 +73,9 @@ const LeagueRequestForm = () => {
           ))}
         </CommandGroup>
       </Command>
-      <button type="submit">Request Invite</button>
+      <Button className="bg-blue-400" type="submit">
+        Request Invite
+      </Button>
     </form>
   );
 };

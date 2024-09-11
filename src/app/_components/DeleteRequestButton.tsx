@@ -26,7 +26,7 @@ export default function DeleteRequestButton({ invite }: PageProps) {
 
   return (
     <AnimatePresence>
-      <p>Your outstanding requests</p>
+      <p className="dark:text-stone-200">Your outstanding requests</p>
       {isVisible && (
         <motion.div
           initial={{ opacity: 1, scale: 1 }}
@@ -41,7 +41,7 @@ export default function DeleteRequestButton({ invite }: PageProps) {
           key={id}
           className="flex w-72 justify-between"
         >
-          <span>{league?.name ?? "no league name"}</span>
+          <span className="dark:text-stone-200">{league?.name ?? "no league name"}</span>
           <button onClick={handleDelete}>Delete</button>
         </motion.div>
       )}

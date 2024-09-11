@@ -43,6 +43,13 @@
       "when": 1724957222453,
       "tag": "0005_young_black_cat",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1725483267283,
+      "tag": "0006_cool_quicksilver",
+      "breakpoints": true
     }
   ]
 }

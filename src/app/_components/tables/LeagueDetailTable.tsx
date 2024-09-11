@@ -57,11 +57,6 @@ const LeagueDetailTable = ({
   });
 
   const myTeam = fantasyTeams.find((team) => team.ownerId === userId) as FantasyTeamDetail;
-  console.log(
-    "teams: ",
-    //myTeam.picks.find((pick) => pick.week == 3),
-    myTeam.picks,
-  );
 
   const QB_LIST = useMemo(() => players.filter((player) => player.position === "QB"), []);
   const RB_LIST = useMemo(() => players.filter((player) => player.position === "RB"), []);
@@ -122,7 +117,9 @@ const LeagueDetailTable = ({
         },
         {
           field: "points",
-          valueGetter: "data.qbPoints",
+          valueGetter: (params: any) => {
+            return params.data.quarterback?.fantasyPoints.toFixed(2) ?? 0;
+          },
         },
       ],
     },
@@ -151,7 +148,12 @@ const LeagueDetailTable = ({
             },
           },
         },
-        { field: "points", valueGetter: "data.rbPoints" },
+        {
+          field: "points",
+          valueGetter: (params: any) => {
+            return params.data.runningBack?.fantasyPoints.toFixed(2) ?? 0;
+          },
+        },
       ],
     },
     {
@@ -178,7 +180,12 @@ const LeagueDetailTable = ({
             },
           },
         },
-        { field: "Points", valueGetter: "data.wrPoints" },
+        {
+          field: "Points",
+          valueGetter: (params: any) => {
+            return params.data.wideReceiver?.fantasyPoints.toFixed(2) ?? 0;
+          },
+        },
       ],
     },
     {
@@ -205,7 +212,12 @@ const LeagueDetailTable = ({
             },
           },
         },
-        { field: "Points", valueGetter: "data.tePoints" },
+        {
+          field: "Points",
+          valueGetter: (params: any) => {
+            return params.data.tightEnd?.fantasyPoints.toFixed(2) ?? 0;
+          },
+        },
       ],
     },
     {
@@ -214,7 +226,7 @@ const LeagueDetailTable = ({
         {
           headerName: "Defense",
           colId: "defenseName",
-          editable: true,
+          editable: (params: any) => params.data.week === week,
           field: "defenseInput",
           cellRenderer: (cell: any) =>
             cell.data.defenseInput ? cell.data.defenseInput.split("%") : cell.data.defense?.team?.name,

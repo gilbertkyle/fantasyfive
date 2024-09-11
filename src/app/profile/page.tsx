@@ -7,7 +7,6 @@ export default async function page() {
 
   return (
     <div>
-      {JSON.stringify(invites, null, 2)}
       {invites.map((invite) => (
         <DeleteRequestButton key={invite.id} invite={invite} />
       ))}

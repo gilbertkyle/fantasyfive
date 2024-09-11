@@ -11,10 +11,37 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "~/components/ui/navigation-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 
 export default function FFLDropdownMenu() {
   return (
-    <NavigationMenu>
+    <DropdownMenu>
+      <DropdownMenuTrigger className="dark:text-stone-200">FFL</DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <Link href="/ffl">
+          <DropdownMenuItem>Home</DropdownMenuItem>
+        </Link>
+        <DropdownMenuLabel>Leagues</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <Link href="/ffl/league/join">
+          <DropdownMenuItem>Join</DropdownMenuItem>
+        </Link>
+        <Link href="/ffl/league/create">
+          <DropdownMenuItem>Create</DropdownMenuItem>
+        </Link>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+/* <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuTrigger className="transition-all dark:text-stone-200">FFL</NavigationMenuTrigger>
@@ -40,6 +67,4 @@ export default function FFLDropdownMenu() {
           </NavigationMenuContent>
         </NavigationMenuItem>
       </NavigationMenuList>
-    </NavigationMenu>
-  );
-}
+    </NavigationMenu> */

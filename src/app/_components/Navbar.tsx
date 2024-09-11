@@ -20,7 +20,7 @@ const Navbar = () => {
       <div className="">
         <h2 className="text-xl tracking-wide dark:text-stone-200">Fantasy Five</h2>
       </div>
-      <nav className="flex items-center">
+      <nav className="flex items-center gap-4">
         <FFLDropdownMenu />
         <span className="p-2">
           {isSignedIn ? (

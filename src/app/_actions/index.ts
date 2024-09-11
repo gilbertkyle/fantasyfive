@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { db } from "~/server/db";
-import { fantasyTeams, leagueInvites, leagueRequests, picks, playerWeeks, players, leagues } from "~/server/db/schema";
+import { leagueInvites, leagueRequests, picks, playerWeeks, players, leagues, defenses } from "~/server/db/schema";
 import { currentUser } from "@clerk/nextjs";
 import { eq, sql } from "drizzle-orm";
 import { actionClient } from "~/lib/safe-action";
@@ -12,6 +12,7 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 import { NeonDbError } from "@neondatabase/serverless";
 import { inviteUserSchema } from "../_schemata/invitePlayerSchema";
+import { getOrCreateWeek, getOrCreateDefenseWeek } from "~/server/helpers/getOrCreateWeek";
 
 export const fetchLeagues = async () => {
   const user = await currentUser();
@@ -70,18 +71,58 @@ const updatePickSchema = z.object({
 });
 
 export const updatePick = actionClient.schema(updatePickSchema).action(async ({ parsedInput: pick }) => {
-  console.log("hello");
   const user = await currentUser();
   if (!user) throw new Error("you should be logged in");
 
-  const { qbInput, rbInput, wrInput, teInput, defenseInput } = pick;
-  const values = {
+  const { qbInput, rbInput, wrInput, teInput, defenseInput, week, season } = pick;
+  /* const values = {
     quarterbackId: qbInput?.id,
     runningBackId: rbInput?.id,
     wideReceiverId: wrInput?.id,
     tightEndId: teInput?.id,
     defenseId: defenseInput?.id,
+  }; */
+
+  const quarterbackId = qbInput?.id ?? "";
+  const runningBackId = rbInput?.id ?? "";
+  const wideReceiverId = wrInput?.id ?? "";
+  const tightEndId = teInput?.id ?? "";
+  const defenseId = defenseInput?.id ?? 0;
+
+  /* let quarterbackWeek = await db.query.playerWeeks.findFirst({
+    columns: {
+      id: true,
+    },
+    where: (playerWeek, { and }) =>
+      and(eq(playerWeek.week, week), eq(playerWeek.season, season), eq(playerWeek.playerId, quarterbackId)),
+  });
+  if (!quarterbackWeek && quarterbackId) {
+    console.log("hey");
+    [quarterbackWeek] = await db
+      .insert(playerWeeks)
+      .values({
+        week,
+        season,
+        playerId: quarterbackId,
+      })
+      .returning({
+        id: playerWeeks.id,
+      });
+  } */
+  const quarterbackWeek = await getOrCreateWeek(quarterbackId, week, season);
+  const runningBackWeek = await getOrCreateWeek(runningBackId, week, season);
+  const wideReceiverWeek = await getOrCreateWeek(wideReceiverId, week, season);
+  const tightEndWeek = await getOrCreateWeek(tightEndId, week, season);
+  const defenseWeek = await getOrCreateDefenseWeek(defenseId, week, season);
+
+  const values = {
+    quarterbackId: quarterbackWeek?.id,
+    runningBackId: runningBackWeek?.id,
+    wideReceiverId: wideReceiverWeek?.id,
+    tightEndId: tightEndWeek?.id,
+    defenseId: defenseWeek?.id,
   };
+
   // this line clears undefined values
   // @ts-expect-error: typescript isn't smart enough to realize this won't error
   Object.keys(values).forEach((key) => (values[key] === undefined ? delete values[key] : {}));
@@ -103,16 +144,16 @@ export const updatePick = actionClient.schema(updatePickSchema).action(async ({ 
   const { picks: myPicks } = myTeam;
 
   myPicks.forEach((myPick) => {
-    if (myPick.quarterbackId === pick.qbInput?.id) {
+    if (myPick.quarterbackId === values.quarterbackId) {
       errors.push("Qb error");
     }
-    if (myPick.runningBackId === pick.rbInput?.id) {
+    if (myPick.runningBackId === values.runningBackId) {
       errors.push("rb error");
     }
-    if (myPick.wideReceiverId === pick.wrInput?.id) {
+    if (myPick.wideReceiverId === values.wideReceiverId) {
       errors.push("wr error");
     }
-    if (myPick.tightEndId === pick.teInput?.id) {
+    if (myPick.tightEndId === values.tightEndId) {
       errors.push("te error");
     }
   });
@@ -136,6 +177,7 @@ export const fetchACPlayers = async () => {
 };
 
 export const fetchACTeams = async () => {
+  // function that grabs defense data for the autocomplete in the pick table
   const teams = await db.query.teams.findMany();
   return teams;
 };
@@ -215,6 +257,9 @@ export const fetchUserList = async (emailPrefix: string) => {
   });
 
   return users.map((user) => {
+    const { emailAddresses } = user;
+    const first = emailAddresses[0]!;
+    const { emailAddress } = first;
     // this trick converts a class to an object
     return JSON.parse(JSON.stringify(user));
   });

@@ -46,13 +46,13 @@ export const picks = pgTable("picks", {
   season: integer("season").notNull(),
   week: integer("week").notNull(),
   fantasyTeamId: integer("fantasy_team_id").notNull(),
-  quarterbackId: varchar("quarterback_id", { length: 64 }),
+  quarterbackId: integer("quarterback_id"),
   qbPoints: real("qb_points").default(0.0),
-  runningBackId: varchar("running_back_id", { length: 64 }),
+  runningBackId: integer("running_back_id"),
   rbPoints: real("rb_points").default(0.0),
-  wideReceiverId: varchar("wide_receiver_id", { length: 64 }),
+  wideReceiverId: integer("wide_receiver_id"),
   wrPoints: real("wr_points").default(0.0),
-  tightEndId: varchar("tight_end_id", { length: 64 }),
+  tightEndId: integer("tight_end_id"),
   tePoints: real("te_points").default(0.0),
   defenseId: integer("defense_id"),
   defensePoints: real("defense_points").default(0.0),
@@ -174,22 +174,22 @@ export const leagueInvites = pgTable("league_invites", {
 export const pickRelations = relations(picks, ({ one }) => ({
   quarterback: one(playerWeeks, {
     fields: [picks.quarterbackId],
-    references: [playerWeeks.playerId],
+    references: [playerWeeks.id],
     relationName: "quarterback_pick",
   }),
   runningBack: one(playerWeeks, {
     fields: [picks.runningBackId],
-    references: [playerWeeks.playerId],
+    references: [playerWeeks.id],
     relationName: "running_back_pick",
   }),
   wideReceiver: one(playerWeeks, {
     fields: [picks.wideReceiverId],
-    references: [playerWeeks.playerId],
+    references: [playerWeeks.id],
     relationName: "wide_receiver_pick",
   }),
   tightEnd: one(playerWeeks, {
     fields: [picks.tightEndId],
-    references: [playerWeeks.playerId],
+    references: [playerWeeks.id],
     relationName: "tight_end_pick",
   }),
   defense: one(defenses, {
@@ -221,7 +221,7 @@ export const defenses = pgTable(
     specialTeamsTds: integer("special_teams_tds").default(0),
   },
   (table) => ({
-    unq: uniqueIndex().on(table.id, table.week, table.season),
+    unq: uniqueIndex().on(table.teamId, table.week, table.season),
   }),
 );
 
