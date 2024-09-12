@@ -99,7 +99,7 @@
       "react-hooks/exhaustive-deps": [
         "warn",
         {
-          "additionalHooks": "useDebouncedEffect"
+          "additionalHooks": ""
         }
       ]
     }
