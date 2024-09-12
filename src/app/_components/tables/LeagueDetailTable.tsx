@@ -94,7 +94,7 @@ const LeagueDetailTable = ({
         {
           headerName: "Name",
           colId: "qbName",
-          editable: true,
+          editable: (params: any) => params.data.week === week,
           field: "qbInput",
           cellRenderer: (cell: any) => {
             return cell.data.qbInput ? cell.data.qbInput.split("%")[0] : cell.data.quarterback?.player?.name;
@@ -130,7 +130,7 @@ const LeagueDetailTable = ({
           headerName: "Name",
           field: "rbInput",
           colId: "rbName",
-          editable: true,
+          editable: (params: any) => params.data.week === week,
           cellRenderer: (cell: any) =>
             cell.data.rbInput ? cell.data.rbInput.split("%")[0] : cell.data.runningBack?.player?.name,
           cellEditor: "agRichSelectCellEditor",
@@ -162,7 +162,7 @@ const LeagueDetailTable = ({
         {
           headerName: "Name",
           colId: "wrName",
-          editable: true,
+          editable: (params: any) => params.data.week === week,
           field: "wrInput",
           cellRenderer: (cell: any) =>
             cell.data.wrInput ? cell.data.wrInput.split("%")[0] : cell.data.wideReceiver?.player?.name,
@@ -194,7 +194,7 @@ const LeagueDetailTable = ({
         {
           headerName: "Name",
           colId: "teName",
-          editable: true,
+          editable: (params: any) => params.data.week === week,
           field: "teInput",
           cellRenderer: (cell: any) =>
             cell.data.teInput ? cell.data.teInput.split("%")[0] : cell.data.tightEnd?.player?.name,
@@ -250,27 +250,30 @@ const LeagueDetailTable = ({
     },
     {
       field: "Actions",
-      cellRenderer: (params: any) => (
-        <span
-          className="cursor-pointer rounded-sm border border-gray-400/40 p-2 shadow-sm"
-          onClick={async () => {
-            const qb = parseInput(params.data?.qbInput);
-            const rb = parseInput(params.data?.rbInput);
-            const wr = parseInput(params.data?.wrInput);
-            const te = parseInput(params.data?.teInput);
-            const defense = parseDefenseInput(params.data?.defenseInput);
-            params.data.qbInput = qb;
-            params.data.rbInput = rb;
-            params.data.wrInput = wr;
-            params.data.teInput = te;
-            params.data.defenseInput = defense;
-            console.log("params: ", params.data);
-            execute(params.data);
-          }}
-        >
-          Update Row
-        </span>
-      ),
+      cellRenderer: (params: any) =>
+        params.data?.week === week ? (
+          <span
+            className="cursor-pointer rounded-sm border border-gray-400/40 p-2 shadow-sm"
+            onClick={async () => {
+              const qb = parseInput(params.data?.qbInput);
+              const rb = parseInput(params.data?.rbInput);
+              const wr = parseInput(params.data?.wrInput);
+              const te = parseInput(params.data?.teInput);
+              const defense = parseDefenseInput(params.data?.defenseInput);
+              params.data.qbInput = qb;
+              params.data.rbInput = rb;
+              params.data.wrInput = wr;
+              params.data.teInput = te;
+              params.data.defenseInput = defense;
+              console.log("params: ", params.data);
+              execute(params.data);
+            }}
+          >
+            Update Row
+          </span>
+        ) : (
+          <span></span>
+        ),
     },
   ]);
 
@@ -279,6 +282,8 @@ const LeagueDetailTable = ({
   const gridOptions: GridOptions<(typeof myTeam.picks)[0]> = {
     rowData: myTeam.picks,
   };
+
+  console.log("picks: ", myTeam.picks);
 
   return (
     <div className={`${theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz"} h-screen`}>
