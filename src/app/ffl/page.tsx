@@ -7,7 +7,12 @@ const Page = async () => {
   const leagues = await fetchLeagues();
   return (
     <div className="max-w-full">
-      <LeaguesTable leagues={leagues} />
+      <div>
+        <h1 className="p-2">My leagues</h1>
+      </div>
+      <div>
+        <LeaguesTable leagues={leagues} />
+      </div>
     </div>
   );
 };

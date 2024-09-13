@@ -26,12 +26,12 @@ const LeaguesTable = ({ leagues }: Props) => {
       },
     },
 
-    { field: "owner.username", headerName: "Commissioner" },
+    //{ field: "owner.username", headerName: "Commissioner" },
   ]);
   const [rowData, setRowData] = useState(leagues);
 
   return (
-    <div className={`h-72 transition-all ${isDarkMode ? "ag-theme-quartz-dark" : "ag-theme-quartz"}`}>
+    <div className={`h-72 w-72 transition-all ${isDarkMode ? "ag-theme-quartz-dark" : "ag-theme-quartz"}`}>
       <AgGridReact
         //@ts-expect-error: column defs are weird
         columnDefs={colDefs}
