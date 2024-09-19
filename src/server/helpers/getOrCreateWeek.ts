@@ -31,9 +31,10 @@ export const getOrCreateDefenseWeek = async (teamId: number, week: number, seaso
       id: true,
     },
     where: (defenseWeek, { and, eq }) =>
-      and(eq(defenseWeek.id, teamId), eq(defenseWeek.week, week), eq(defenseWeek.season, season)),
+      and(eq(defenseWeek.teamId, teamId), eq(defenseWeek.week, week), eq(defenseWeek.season, season)),
   });
-  if (!defenseWeek && teamId) {
+  console.log("defense week: ", defenseWeek);
+  if (!defenseWeek) {
     [defenseWeek] = await db
       .insert(defenses)
       .values({
