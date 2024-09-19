@@ -34,12 +34,19 @@ export const leagues = pgTable("leagues", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const fantasyTeams = pgTable("fantasy_teams", {
-  id: serial("id").primaryKey(),
-  name: varchar("name", { length: 256 }),
-  ownerId: varchar("owner_id", { length: 256 }),
-  leagueId: integer("league_id"),
-});
+export const fantasyTeams = pgTable(
+  "fantasy_teams",
+  {
+    id: serial("id").primaryKey(),
+    name: varchar("name", { length: 256 }),
+    ownerId: varchar("owner_id", { length: 256 }),
+    leagueId: integer("league_id"),
+  },
+
+  (table) => ({
+    unq: uniqueIndex().on(table.ownerId, table.leagueId),
+  }),
+);
 
 export const picks = pgTable("picks", {
   id: serial("id").primaryKey(),
@@ -240,8 +247,8 @@ export const leagueRequests = pgTable(
   "league_requests",
   {
     id: serial("id").primaryKey(),
-    leagueId: integer("league_id"),
-    from: varchar("from", { length: 256 }),
+    leagueId: integer("league_id").notNull(),
+    from: varchar("from", { length: 256 }).notNull(),
   },
   (table) => ({
     unq: uniqueIndex().on(table.leagueId, table.from),

@@ -2,7 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 import { db } from "~/server/db";
-import { leagueInvites, leagueRequests, picks, playerWeeks, players, leagues, defenses } from "~/server/db/schema";
+import {
+  leagueInvites,
+  leagueRequests,
+  picks,
+  playerWeeks,
+  players,
+  leagues,
+  defenses,
+  fantasyTeams,
+} from "~/server/db/schema";
 import { currentUser } from "@clerk/nextjs";
 import { eq, sql } from "drizzle-orm";
 import { actionClient } from "~/lib/safe-action";
@@ -13,6 +22,7 @@ import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 import { NeonDbError } from "@neondatabase/serverless";
 import { inviteUserSchema } from "../_schemata/invitePlayerSchema";
 import { getOrCreateWeek, getOrCreateDefenseWeek } from "~/server/helpers/getOrCreateWeek";
+import { CURRENT_SEASON, SEASON_LENGTH_IN_WEEKS } from "~/settings";
 
 export const fetchLeagues = async () => {
   const user = await currentUser();
@@ -311,6 +321,30 @@ export const fetchLeagueRequests = async (leagueId: number) => {
     .from(leagueRequests)
     .innerJoin(leagues, eq(leagues.id, leagueRequests.leagueId))
     .where(eq(leagues.ownerId, user.id));
+};
+
+export const addUserToLeague = async (leagueId: number, userId: string) => {
+  //create new team
+  const fantasyTeamValues = {
+    name: "default name",
+    leagueId,
+    ownerId: userId,
+  };
+
+  const [fantasyTeam] = await db.insert(fantasyTeams).values(fantasyTeamValues).returning();
+
+  if (!fantasyTeam) throw new Error("fantasy team creation error");
+  const weekData = [...Array(SEASON_LENGTH_IN_WEEKS).keys()].map((x) => ({
+    week: x + 1,
+    season: CURRENT_SEASON,
+    fantasyTeamId: fantasyTeam.id,
+  }));
+
+  const [pickResponse] = await db.insert(picks).values(weekData).returning();
+  if (!pickResponse) throw new Error("error in pick creation");
+  console.log("pick response: ", pickResponse);
+  revalidatePath("/ffl/[leagueId]/requests]");
+  //const result = await db.insert(leagues).values().where(eq(leagues.id, leagueId))
 };
 
 export const fetchOutgoingRequests = async () => {
