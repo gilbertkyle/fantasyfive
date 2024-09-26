@@ -12,6 +12,7 @@
     "start": "next start",
     "migrate": "ts-node ./migrate.js",
     "fetch-players": "tsx scripts/fetchPlayers.ts",
+    "fetch-defenses": "tsx scripts/fetchDefenses.ts",
     "load-teams": "tsx scripts/loadTeams.ts",
     "test": "vitest"
   },

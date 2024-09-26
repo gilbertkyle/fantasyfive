@@ -85,13 +85,6 @@ export const updatePick = actionClient.schema(updatePickSchema).action(async ({ 
   if (!user) throw new Error("you should be logged in");
 
   const { qbInput, rbInput, wrInput, teInput, defenseInput, week, season } = pick;
-  /* const values = {
-    quarterbackId: qbInput?.id,
-    runningBackId: rbInput?.id,
-    wideReceiverId: wrInput?.id,
-    tightEndId: teInput?.id,
-    defenseId: defenseInput?.id,
-  }; */
 
   const quarterbackId = qbInput?.id ?? "";
   const runningBackId = rbInput?.id ?? "";
@@ -99,26 +92,6 @@ export const updatePick = actionClient.schema(updatePickSchema).action(async ({ 
   const tightEndId = teInput?.id ?? "";
   const defenseId = defenseInput?.id ?? 0;
 
-  /* let quarterbackWeek = await db.query.playerWeeks.findFirst({
-    columns: {
-      id: true,
-    },
-    where: (playerWeek, { and }) =>
-      and(eq(playerWeek.week, week), eq(playerWeek.season, season), eq(playerWeek.playerId, quarterbackId)),
-  });
-  if (!quarterbackWeek && quarterbackId) {
-    console.log("hey");
-    [quarterbackWeek] = await db
-      .insert(playerWeeks)
-      .values({
-        week,
-        season,
-        playerId: quarterbackId,
-      })
-      .returning({
-        id: playerWeeks.id,
-      });
-  } */
   const quarterbackWeek = await getOrCreateWeek(quarterbackId, week, season);
   const runningBackWeek = await getOrCreateWeek(runningBackId, week, season);
   const wideReceiverWeek = await getOrCreateWeek(wideReceiverId, week, season);
@@ -233,6 +206,50 @@ export const fetchLeagueDetail = async (id: number) => {
     },
   });
   if (!league) throw new Error("no league");
+  return league;
+};
+
+export const fetchLeagueWeek = async ({ week, leagueId }: { week: number; leagueId: number }) => {
+  const league = await db.query.leagues.findFirst({
+    where: (leagues, { eq }) => eq(leagues.id, leagueId),
+    with: {
+      teams: {
+        with: {
+          picks: {
+            where: (picks, { lte }) => lte(picks.week, week),
+            with: {
+              quarterback: {
+                with: {
+                  player: true,
+                },
+              },
+              runningBack: {
+                with: {
+                  player: true,
+                },
+              },
+              wideReceiver: {
+                with: {
+                  player: true,
+                },
+              },
+              tightEnd: {
+                with: {
+                  player: true,
+                },
+              },
+              defense: {
+                with: {
+                  team: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+  if (!league) throw new Error("Can't find league");
   return league;
 };
 

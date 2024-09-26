@@ -11,6 +11,7 @@ import type { fetchLeagueDetail } from "~/app/_actions";
 import type { ColDef, ColGroupDef, GridOptions, IRichCellEditorParams } from "ag-grid-community";
 import { useTheme } from "~/context/ThemeContext";
 import { useMediaQuery } from "~/lib/utils";
+import Link from "next/link";
 
 import "ag-grid-community/styles/ag-grid.css"; // Core CSS
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
@@ -31,7 +32,7 @@ const LeagueDetailTable = ({
 }) => {
   const gridRef = useRef();
   const week = getCurrentWeek();
-  const { teams: fantasyTeams } = league;
+  const { teams: fantasyTeams, id: leagueId } = league;
   const { theme } = useTheme();
   const isMobile = useMediaQuery(768);
 
@@ -87,6 +88,9 @@ const LeagueDetailTable = ({
     {
       field: "week",
       sort: "asc",
+      cellRenderer: (cell: any) => {
+        return <Link href={`/ffl/${leagueId}/${cell.data.week}`}>{cell.data.week}</Link>;
+      },
     },
     {
       headerName: "Quarterback",

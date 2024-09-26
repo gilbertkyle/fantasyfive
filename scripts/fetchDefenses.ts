@@ -3,11 +3,13 @@ import { z } from "zod";
 import { db } from "~/server/db";
 import { getCurrentWeek, CURRENT_SEASON } from "~/settings";
 import { defenses } from "~/server/db/schema";
+import { sql } from "drizzle-orm";
 
 const defenseSchema = z.object({
   week: z.string().transform((el) => parseInt(el)),
   season: z.string().transform((el) => parseInt(el)),
   name: z.string(),
+  fantasyPoints: z.string().transform((el) => parseFloat(el)),
   sacks: z.string().transform((el) => parseFloat(el)),
   interceptions: z.string().transform((el) => parseInt(el)),
   fumblesRecovered: z.string().transform((el) => parseInt(el)),
@@ -91,7 +93,13 @@ await (async () => {
         teamId: teams.find((team) => team.abbr === defense.name)?.id ?? 0,
       };
     });
-    await db.insert(defenses).values(dbData).onConflictDoNothing();
+    await db
+      .insert(defenses)
+      .values(dbData)
+      .onConflictDoUpdate({
+        target: [defenses.teamId, defenses.week, defenses.season],
+        set: { fantasyPoints: sql`excluded.fantasy_points` },
+      });
   }
   await browser.close();
 })();

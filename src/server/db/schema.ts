@@ -201,7 +201,7 @@ export const pickRelations = relations(picks, ({ one }) => ({
   }),
   defense: one(defenses, {
     fields: [picks.defenseId],
-    references: [defenses.teamId],
+    references: [defenses.id],
     relationName: "defense_pick",
   }),
   fantasyTeam: one(fantasyTeams, {
