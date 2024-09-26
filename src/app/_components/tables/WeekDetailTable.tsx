@@ -23,11 +23,25 @@ const WeekDetailTable = ({ league, week, leagueId, users }: Props) => {
   const { theme } = useTheme();
 
   const picks = league.teams.map((team) => {
-    return team.picks.find((pick) => pick.week === week);
-  });
+    const { ownerId } = team;
+    const pick = team.picks.find((pick) => pick.week === week);
+    const user = users.find((u) => u.id === ownerId);
+    return {
+      user,
+      ...pick,
+    };
 
+    /* return team.picks.find((pick) => {
+      return pick.week === week;
+    }); */
+  });
+  console.log("picks: ", picks);
   const [rowData, setRowData] = useState(picks);
   const [columnDefs, setColumnDefs] = useState([
+    {
+      headerName: "User",
+      cellRenderer: (cell: any) => cell.data.user?.name,
+    },
     {
       headerName: "Quarterback",
       children: [
