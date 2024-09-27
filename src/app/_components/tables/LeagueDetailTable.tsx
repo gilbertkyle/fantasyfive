@@ -88,9 +88,12 @@ const LeagueDetailTable = ({
     {
       field: "week",
       sort: "asc",
-      cellRenderer: (cell: any) => {
-        return <Link href={`/ffl/${leagueId}/${cell.data.week}`}>{cell.data.week}</Link>;
-      },
+      cellRenderer: (cell: any) =>
+        cell.data.week < week ? (
+          <Link href={`/ffl/${leagueId}/${cell.data.week}`}>{cell.data.week}</Link>
+        ) : (
+          <span>{cell.data.week}</span>
+        ),
     },
     {
       headerName: "Quarterback",
