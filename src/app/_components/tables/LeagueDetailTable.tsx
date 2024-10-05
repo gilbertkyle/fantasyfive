@@ -101,7 +101,7 @@ const LeagueDetailTable = ({
         {
           headerName: "Name",
           colId: "qbName",
-          editable: (params: any) => params.data.week === week,
+          editable: (params: any) => params.data.week <= week,
           field: "qbInput",
           cellRenderer: (cell: any) => {
             return cell.data.qbInput ? cell.data.qbInput.split("%")[0] : cell.data.quarterback?.player?.name;
@@ -137,7 +137,7 @@ const LeagueDetailTable = ({
           headerName: "Name",
           field: "rbInput",
           colId: "rbName",
-          editable: (params: any) => params.data.week === week,
+          editable: (params: any) => params.data.week <= week,
           cellRenderer: (cell: any) =>
             cell.data.rbInput ? cell.data.rbInput.split("%")[0] : cell.data.runningBack?.player?.name,
           cellEditor: "agRichSelectCellEditor",
@@ -169,7 +169,7 @@ const LeagueDetailTable = ({
         {
           headerName: "Name",
           colId: "wrName",
-          editable: (params: any) => params.data.week === week,
+          editable: (params: any) => params.data.week <= week,
           field: "wrInput",
           cellRenderer: (cell: any) =>
             cell.data.wrInput ? cell.data.wrInput.split("%")[0] : cell.data.wideReceiver?.player?.name,
@@ -201,7 +201,7 @@ const LeagueDetailTable = ({
         {
           headerName: "Name",
           colId: "teName",
-          editable: (params: any) => params.data.week === week,
+          editable: (params: any) => params.data.week <= week,
           field: "teInput",
           cellRenderer: (cell: any) =>
             cell.data.teInput ? cell.data.teInput.split("%")[0] : cell.data.tightEnd?.player?.name,
@@ -233,7 +233,7 @@ const LeagueDetailTable = ({
         {
           headerName: "Defense",
           colId: "defenseName",
-          editable: (params: any) => params.data.week === week,
+          editable: (params: any) => params.data.week <= week,
           field: "defenseInput",
           cellRenderer: (cell: any) =>
             cell.data.defenseInput ? cell.data.defenseInput.split("%") : cell.data.defense?.team?.name,
@@ -258,7 +258,7 @@ const LeagueDetailTable = ({
     {
       field: "Actions",
       cellRenderer: (params: any) =>
-        params.data?.week === week ? (
+        params.data?.week <= week ? (
           <span
             className="cursor-pointer rounded-sm border border-gray-400/40 p-2 shadow-sm"
             onClick={async () => {
