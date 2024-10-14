@@ -24,7 +24,20 @@ import {
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
 
-export const positionEnum = pgEnum("position", ["QB", "RB", "WR", "TE", "DEF", "FB", "T", "SS", "OLB", "CB", "P"]);
+export const positionEnum = pgEnum("position", [
+  "QB",
+  "RB",
+  "WR",
+  "TE",
+  "DEF",
+  "FB",
+  "T",
+  "SS",
+  "OLB",
+  "CB",
+  "P",
+  "FS",
+]);
 
 export const leagues = pgTable("leagues", {
   id: serial("id").primaryKey(),

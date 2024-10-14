@@ -57,6 +57,13 @@
       "when": 1726769013174,
       "tag": "0007_lazy_big_bertha",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1728930216976,
+      "tag": "0008_calm_juggernaut",
+      "breakpoints": true
     }
   ]
 }
