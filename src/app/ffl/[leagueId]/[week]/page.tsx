@@ -21,9 +21,6 @@ const Page = async ({ params }: Props) => {
       limit: 20,
     })
   ).map(filterUserForClient);
-
-  //console.log("owners: ", teamOwners);
-  console.log("users: ", users);
   return (
     <div>
       <WeekDetailTable league={league} week={parseInt(week)} leagueId={parseInt(leagueId)} users={users} />

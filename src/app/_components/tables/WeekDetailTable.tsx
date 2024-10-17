@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { useTheme } from "~/context/ThemeContext";
 import "ag-grid-community/styles/ag-grid.css"; // Core CSS
@@ -26,7 +26,6 @@ const WeekDetailTable = ({ league, week, leagueId, users }: Props) => {
     const { ownerId } = team;
     const pick = team.picks.find((pick) => pick.week === week);
     const user = users.find((u) => u.id === ownerId);
-    console.log("user: ", user);
     return {
       user,
       ...pick,
@@ -36,7 +35,13 @@ const WeekDetailTable = ({ league, week, leagueId, users }: Props) => {
       return pick.week === week;
     }); */
   });
-  //console.log("picks: ", picks);
+
+  const defaultColumnDef = useMemo(() => {
+    return {
+      width: 120,
+    };
+  }, []);
+
   const [rowData, setRowData] = useState(picks);
   const [columnDefs, setColumnDefs] = useState([
     {
@@ -109,14 +114,25 @@ const WeekDetailTable = ({ league, week, leagueId, users }: Props) => {
         },
         {
           field: "points",
-          valueGetter: (params: any) => params.data.defense?.fantasyPoints.toFixed(2) ?? 0.0,
+          valueGetter: (params: any) => params.data.defense?.fantasyPoints.toFixed(2),
         },
       ],
+    },
+    {
+      headerName: "Total Points",
+      valueGetter: (params: any) =>
+        (
+          (params.data.quarterback?.fantasyPoints ?? 0) +
+          (params.data.runningBack?.fantasyPoints ?? 0) +
+          (params.data.wideReceiver?.fantasyPoints ?? 0) +
+          (params.data.tightEnd?.fantasyPoints ?? 0) +
+          (params.data.defense?.fantasyPoints ?? 0)
+        ).toFixed(2),
     },
   ]);
   return (
     <div className={`${theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz"} h-screen`}>
-      <AgGridReact columnDefs={columnDefs} rowData={rowData} />
+      <AgGridReact columnDefs={columnDefs} rowData={rowData} defaultColDef={defaultColumnDef} />
     </div>
   );
 };
