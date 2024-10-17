@@ -21,11 +21,12 @@ type Props = {
 
 const WeekDetailTable = ({ league, week, leagueId, users }: Props) => {
   const { theme } = useTheme();
-
+  //console.log("users: ", users);
   const picks = league.teams.map((team) => {
     const { ownerId } = team;
     const pick = team.picks.find((pick) => pick.week === week);
     const user = users.find((u) => u.id === ownerId);
+    console.log("user: ", user);
     return {
       user,
       ...pick,
@@ -35,7 +36,7 @@ const WeekDetailTable = ({ league, week, leagueId, users }: Props) => {
       return pick.week === week;
     }); */
   });
-  console.log("picks: ", picks);
+  //console.log("picks: ", picks);
   const [rowData, setRowData] = useState(picks);
   const [columnDefs, setColumnDefs] = useState([
     {

@@ -18,9 +18,12 @@ const Page = async ({ params }: Props) => {
   const users = (
     await clerkClient.users.getUserList({
       userId: teamOwners,
+      limit: 20,
     })
   ).map(filterUserForClient);
 
+  //console.log("owners: ", teamOwners);
+  console.log("users: ", users);
   return (
     <div>
       <WeekDetailTable league={league} week={parseInt(week)} leagueId={parseInt(leagueId)} users={users} />

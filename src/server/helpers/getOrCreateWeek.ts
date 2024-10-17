@@ -43,7 +43,7 @@ export const getOrCreateDefenseWeek = async (teamId: number, week: number, seaso
         teamId,
       })
       .returning({
-        id: playerWeeks.id,
+        id: defenses.id,
       });
   }
   return defenseWeek;
