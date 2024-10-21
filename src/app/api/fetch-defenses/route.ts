@@ -41,6 +41,8 @@ export async function GET(request: Request) {
   });
 
   const defenseData = await page.evaluate(() => {
+    console.log("hey");
+
     const rowData: object[] = [];
     const rows = document.querySelectorAll("#data > tbody > tr");
     //console.log("length: ", rows.length);
