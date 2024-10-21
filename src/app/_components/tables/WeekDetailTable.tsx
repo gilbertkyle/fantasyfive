@@ -21,7 +21,6 @@ type Props = {
 
 const WeekDetailTable = ({ league, week, leagueId, users }: Props) => {
   const { theme } = useTheme();
-  //console.log("users: ", users);
   const picks = league.teams.map((team) => {
     const { ownerId } = team;
     const pick = team.picks.find((pick) => pick.week === week);
@@ -30,10 +29,6 @@ const WeekDetailTable = ({ league, week, leagueId, users }: Props) => {
       user,
       ...pick,
     };
-
-    /* return team.picks.find((pick) => {
-      return pick.week === week;
-    }); */
   });
 
   const defaultColumnDef = useMemo(() => {

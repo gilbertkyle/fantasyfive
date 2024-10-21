@@ -1,9 +1,9 @@
 import { db } from "~/server/db";
 import { playerWeeks, players } from "~/server/db/schema";
 import { z } from "zod";
-import { getCurrentWeek, CURRENT_SEASON } from "~/settings";
-import { sql } from "drizzle-orm";
+import { CURRENT_SEASON, getCurrentWeek } from "~/settings";
 import { env } from "~/env";
+import { sql } from "drizzle-orm";
 
 const positions = ["QB", "RB", "WR", "TE", "DEF", "SS", "FB", "T", "CB", "OLB", "P", "FS"] as const;
 
@@ -213,26 +213,14 @@ const PlayersDataSchema = z.array(PlayerDataSchema);
 
 const PlayerWeeksDataSchema = z.array(PlayerWeekDataSchema);
 
-async function main() {
-  const args = process.argv.slice(2); // gets arguments passed through CLI
-
-  const week = args[0] ?? getCurrentWeek().toString();
-  const season = args[1] ?? CURRENT_SEASON.toString();
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const week = getCurrentWeek().toString();
+  const season = CURRENT_SEASON.toString();
   const body = JSON.stringify({ week, season });
+  const response = await fetch(env.FETCH_PLAYERS_URL);
 
-  const dataUrl = env.FETCH_PLAYERS_URL;
-
-  console.log("body: ", body);
-
-  const response = await fetch(dataUrl, {
-    method: "POST",
-    body: body,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
   const data: unknown = await response.json();
-
   const parsedPlayerData = PlayersDataSchema.safeParse(data);
   const parsedPlayerWeekData = PlayerWeeksDataSchema.safeParse(data);
 
@@ -245,14 +233,15 @@ async function main() {
     console.log("error: ", parsedPlayerData.error);
     return;
   }
+
   const playerWeekData = parsedPlayerWeekData.data;
   const playerData = parsedPlayerData.data;
 
-  // insert players into player table
   await db.insert(players).values(playerData).onConflictDoNothing();
 
   // insert player weeks into playerweek table
   //await db.insert(playerWeeks).values(playerWeekData);
+
   await db
     .insert(playerWeeks)
     .values(playerWeekData)
@@ -260,8 +249,4 @@ async function main() {
       target: [playerWeeks.season, playerWeeks.week, playerWeeks.playerId],
       set: { fantasyPoints: sql`excluded.fantasy_points` },
     });
-}
-
-if (true) {
-  await main();
 }
