@@ -2,11 +2,11 @@
   "crons": [
     {
       "path": "/api/fetch-players",
-      "schedule": "0 8-23 * 9,10,11,12,1 0,1,4"
+      "schedule": "0 0 * 9,10,11,12,1 0,1,4"
     },
     {
       "path": "/api/fetch-defenses",
-      "schedule": "0 8-23 * 9,10,11,12,1 0,1,4"
+      "schedule": "0 0 * 9,10,11,12,1 0,1,4"
     }
   ]
 }
