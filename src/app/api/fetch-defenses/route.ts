@@ -4,6 +4,7 @@ import { db } from "~/server/db";
 import { getCurrentWeek, CURRENT_SEASON } from "~/settings";
 import { defenses } from "~/server/db/schema";
 import { sql } from "drizzle-orm";
+import chromium from "@sparticuz/chromium";
 
 const defenseSchema = z.object({
   week: z.string().transform((el) => parseInt(el)),
@@ -25,10 +26,18 @@ export async function GET(request: Request) {
   const week = getCurrentWeek().toString();
   const season = CURRENT_SEASON.toString();
 
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath(
+      `https://github.com/Sparticuz/chromium/releases/download/v116.0.0/chromium-v116.0.0-pack.tar`,
+    ),
+    headless: chromium.headless,
+    ignoreHTTPSErrors: true,
+  });
   const page = await browser.newPage();
 
-  // this allows console logs in puppeteer to be rendered by node
+  // this allows console logs in puppeteer to be rendered by Node
   page.on("console", (consoleObj) => {
     if (consoleObj.type() === "log") {
       console.log(consoleObj.text());
