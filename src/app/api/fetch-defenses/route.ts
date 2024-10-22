@@ -30,6 +30,7 @@ export async function GET(request: Request) {
 
   const browser = await puppeteer.launch({
     args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
+    ignoreDefaultArgs: ["--disable-extensions"],
     defaultViewport: chromium.defaultViewport,
     executablePath: await chromium.executablePath(
       `https://github.com/Sparticuz/chromium/releases/download/v123.0.1/chromium-v123.0.1-pack.tar`,

@@ -5,7 +5,7 @@ import { CURRENT_SEASON, getCurrentWeek } from "~/settings";
 import { env } from "~/env";
 import { sql } from "drizzle-orm";
 
-const positions = ["QB", "RB", "WR", "TE", "DEF", "SS", "FB", "T", "CB", "OLB", "P", "FS"] as const;
+const positions = ["QB", "RB", "WR", "TE", "DEF", "SS", "FB", "T", "CB", "OLB", "P", "FS", "DB"] as const;
 
 const PlayerWeekDataSchema = z
   .object({
