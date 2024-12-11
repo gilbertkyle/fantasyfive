@@ -5,7 +5,24 @@ import { CURRENT_SEASON, getCurrentWeek } from "~/settings";
 import { env } from "~/env";
 import { sql } from "drizzle-orm";
 
-const positions = ["QB", "RB", "WR", "TE", "DEF", "SS", "FB", "T", "CB", "OLB", "P", "FS", "DB"] as const;
+const positions = [
+  "QB",
+  "RB",
+  "WR",
+  "TE",
+  "DEF",
+  "SS",
+  "FB",
+  "T",
+  "CB",
+  "OLB",
+  "P",
+  "FS",
+  "DB",
+  "ILB",
+  "G",
+  "MLB",
+] as const;
 
 const PlayerWeekDataSchema = z
   .object({
@@ -215,22 +232,28 @@ const PlayerWeeksDataSchema = z.array(PlayerWeekDataSchema);
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const week = getCurrentWeek().toString();
+  const week = (getCurrentWeek() - 1).toString(); // -1 so it gets the previous weeks picks when updating
   const season = CURRENT_SEASON.toString();
   const body = JSON.stringify({ week, season });
-  const response = await fetch(env.FETCH_PLAYERS_URL);
+  const response = await fetch(env.FETCH_PLAYERS_URL, {
+    method: "POST",
+    body: body,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
   const data: unknown = await response.json();
   const parsedPlayerData = PlayersDataSchema.safeParse(data);
   const parsedPlayerWeekData = PlayerWeeksDataSchema.safeParse(data);
 
   if (!parsedPlayerWeekData.success) {
-    console.log("error", parsedPlayerWeekData.error);
+    console.error("error", parsedPlayerWeekData.error);
     return;
   }
 
   if (!parsedPlayerData.success) {
-    console.log("error: ", parsedPlayerData.error);
+    console.error("error: ", parsedPlayerData.error);
     return;
   }
 

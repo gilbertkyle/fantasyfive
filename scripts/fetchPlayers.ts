@@ -5,7 +5,24 @@ import { getCurrentWeek, CURRENT_SEASON } from "~/settings";
 import { sql } from "drizzle-orm";
 import { env } from "~/env";
 
-const positions = ["QB", "RB", "WR", "TE", "DEF", "SS", "FB", "T", "CB", "OLB", "P", "FS"] as const;
+const positions = [
+  "QB",
+  "RB",
+  "WR",
+  "TE",
+  "DEF",
+  "SS",
+  "FB",
+  "T",
+  "CB",
+  "OLB",
+  "P",
+  "FS",
+  "DB",
+  "ILB",
+  "G",
+  "MLB",
+] as const;
 
 const PlayerWeekDataSchema = z
   .object({
@@ -200,13 +217,14 @@ const PlayerDataSchema = z
     player_display_name: z.string().optional(),
     position: z.enum(positions),
     recent_team: z.string().optional(),
+    headshot_url: z.string().url().optional(),
   })
   .transform((player) => ({
     id: player.player_id,
     name: player.player_name,
     displayName: player.player_display_name,
     position: player.position,
-    headshotUrl: "",
+    headshotUrl: player.headshot_url,
   }));
 
 const PlayersDataSchema = z.array(PlayerDataSchema);
@@ -249,7 +267,13 @@ async function main() {
   const playerData = parsedPlayerData.data;
 
   // insert players into player table
-  await db.insert(players).values(playerData).onConflictDoNothing();
+  await db
+    .insert(players)
+    .values(playerData)
+    .onConflictDoUpdate({
+      target: [players.id],
+      set: { headshotUrl: sql`excluded.headshot_url` },
+    });
 
   // insert player weeks into playerweek table
   //await db.insert(playerWeeks).values(playerWeekData);
