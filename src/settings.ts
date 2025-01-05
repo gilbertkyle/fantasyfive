@@ -11,7 +11,7 @@ export const getCurrentWeek = () => {
   const daysDifference = now.diff(BASE_DATE, "day");
   console.log("days: ", daysDifference);
   const week = Math.floor(daysDifference / 7);
-  if (week > SEASON_LENGTH_IN_WEEKS + 1) return SEASON_LENGTH_IN_WEEKS + 1; // SEASON_LENGTH_IN_WEEKS + 1 allows for week 19 to work as the postseason
+  if (week > SEASON_LENGTH_IN_WEEKS) return SEASON_LENGTH_IN_WEEKS + 1; // SEASON_LENGTH_IN_WEEKS + 1 allows for week 19 to work as the postseason
   if (week < 1) return 1;
   return week;
 };
