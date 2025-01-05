@@ -28,16 +28,46 @@ export async function GET(request: Request) {
   const week = getCurrentWeek().toString();
   const season = CURRENT_SEASON.toString();
 
-  const browser = await puppeteer.launch({
-    args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
-    ignoreDefaultArgs: ["--disable-extensions"],
-    defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath(
-      `https://github.com/Sparticuz/chromium/releases/download/v123.0.1/chromium-v123.0.1-pack.tar`,
-    ),
-    headless: chromium.headless,
-    ignoreHTTPSErrors: true,
-  });
+  const viewportOptions = {
+    args: [
+      // Flags for running in Docker on AWS Lambda
+      // https://www.howtogeek.com/devops/how-to-run-puppeteer-and-headless-chrome-in-a-docker-container
+      // https://github.com/alixaxel/chrome-aws-lambda/blob/f9d5a9ff0282ef8e172a29d6d077efc468ca3c76/source/index.ts#L95-L118
+      // https://github.com/Sparticuz/chrome-aws-lambda/blob/master/source/index.ts#L95-L123
+      "--allow-running-insecure-content",
+      "--autoplay-policy=user-gesture-required",
+      "--disable-background-timer-throttling",
+      "--disable-component-update",
+      "--disable-dev-shm-usage",
+      "--disable-domain-reliability",
+      "--disable-features=AudioServiceOutOfProcess,IsolateOrigins,site-per-process",
+      "--disable-ipc-flooding-protection",
+      "--disable-print-preview",
+      "--disable-setuid-sandbox",
+      "--disable-site-isolation-trials",
+      "--disable-speech-api",
+      "--disable-web-security",
+      "--disk-cache-size=33554432",
+      "--enable-features=SharedArrayBuffer",
+      "--hide-scrollbars",
+      "--ignore-gpu-blocklist",
+      "--in-process-gpu",
+      "--mute-audio",
+      "--no-default-browser-check",
+      "--no-first-run",
+      "--no-pings",
+      "--no-sandbox",
+      "--no-zygote",
+      "--single-process",
+      "--use-angle=swiftshader",
+      "--use-gl=swiftshader",
+      "--window-size=1920,1080",
+    ],
+    defaultViewport: null,
+    headless: true,
+  };
+
+  const browser = await puppeteer.launch(viewportOptions);
   const page = await browser.newPage();
 
   // this allows console logs in puppeteer to be rendered by Node
@@ -48,8 +78,8 @@ export async function GET(request: Request) {
   });
 
   await page.goto(`https://www.fantasypros.com/nfl/stats/dst.php?year=${season}&week=${week}&range=week`, {
-    waitUntil: "load",
-    timeout: 0,
+    waitUntil: "networkidle0",
+    timeout: 300000,
   });
 
   const defenseData = await page.evaluate(() => {

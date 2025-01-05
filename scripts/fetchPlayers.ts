@@ -22,6 +22,7 @@ const positions = [
   "ILB",
   "G",
   "MLB",
+  "DE",
 ] as const;
 
 const PlayerWeekDataSchema = z
