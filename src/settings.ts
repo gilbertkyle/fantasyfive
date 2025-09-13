@@ -1,12 +1,12 @@
 import dayjs from "dayjs";
 
-export const CURRENT_SEASON = 2024;
+export const CURRENT_SEASON = 2025;
 export const SEASON_LENGTH_IN_WEEKS = 18;
 
 export const getCurrentWeek = () => {
   // BASE_DATE should be set for 10:00 AM,  2 weeks before the first sunday of the season
   // second argument is month INDEX
-  const BASE_DATE = dayjs(new Date(CURRENT_SEASON, 7, 25, 10, 0, 0));
+  const BASE_DATE = dayjs(new Date(CURRENT_SEASON, 7, 24, 10, 0, 0));
   const now = dayjs();
   const daysDifference = now.diff(BASE_DATE, "day");
   console.log("days: ", daysDifference);

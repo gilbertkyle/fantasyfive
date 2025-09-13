@@ -250,7 +250,9 @@ async function main() {
       "Content-Type": "application/json",
     },
   });
+
   const data: unknown = await response.json();
+  //console.log("data: ", data);
 
   const parsedPlayerData = PlayersDataSchema.safeParse(data);
   const parsedPlayerWeekData = PlayerWeeksDataSchema.safeParse(data);
