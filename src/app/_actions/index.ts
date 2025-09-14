@@ -173,6 +173,7 @@ export const fetchLeagueDetail = async (id: number) => {
         with: {
           picks: {
             //where: (pick, { lte }) => lte(pick.week, getCurrentWeek() + 1),
+            where: (pick, { eq }) => eq(pick.season, CURRENT_SEASON),
             with: {
               quarterback: {
                 with: {

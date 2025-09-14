@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useRef } from "react";
 import type { FantasyTeamDetail, Player, Pick, Team } from "~/server/db/types";
 import { AgGridReact } from "ag-grid-react";
-import { getCurrentWeek } from "~/settings";
+import { CURRENT_SEASON, getCurrentWeek } from "~/settings";
 import { updatePick } from "~/app/_actions";
 import { useAction } from "next-safe-action/hooks";
 import toast from "react-hot-toast";
@@ -284,7 +284,7 @@ const LeagueDetailTable = ({
     },
   ]);
 
-  const [rowData, setRowData] = useState(myTeam.picks);
+  const [rowData, setRowData] = useState(myTeam.picks.filter((pick) => pick.season === CURRENT_SEASON));
 
   const gridOptions: GridOptions<(typeof myTeam.picks)[0]> = {
     rowData: myTeam.picks,
