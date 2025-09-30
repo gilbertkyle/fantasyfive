@@ -90,7 +90,9 @@ const LeagueDetailTable = ({
       sort: "asc",
       cellRenderer: (cell: any) =>
         cell.data.week < week ? (
-          <Link href={`/ffl/${leagueId}/${cell.data.week}`}>{cell.data.week}</Link>
+          <Link className="text-blue-500 underline" href={`/ffl/${leagueId}/${cell.data.week}`}>
+            {cell.data.week}
+          </Link>
         ) : (
           <span>{cell.data.week}</span>
         ),

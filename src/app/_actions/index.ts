@@ -217,7 +217,7 @@ export const fetchLeagueWeek = async ({ week, leagueId }: { week: number; league
       teams: {
         with: {
           picks: {
-            where: (picks, { lte }) => lte(picks.week, week),
+            where: (picks, { eq, and }) => and(eq(picks.week, week), eq(picks.season, CURRENT_SEASON)),
             with: {
               quarterback: {
                 with: {
