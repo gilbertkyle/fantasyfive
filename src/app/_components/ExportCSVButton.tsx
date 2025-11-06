@@ -9,13 +9,25 @@ type FilteredUser = ReturnType<typeof filterUserForClient>;
 type League = Awaited<ReturnType<typeof fetchLeagueWeek>>;
 
 type Props = {
-  data: any;
+  data: {
+    user: string;
+    quarterback: string | null;
+    quarterbackPoints: number | null;
+    runningBack: string | null;
+    runningBackPoints: number;
+    wideReceiver: string | null;
+    wideReceiverPoints: number;
+    tightEnd: string | null;
+    tightEndPoints: number;
+    defense: string | null;
+    defensePoints: number;
+  };
 };
 
 const ExportCSVButton = ({ data }: Props) => {
   console.log(data);
   const handleClick = () => {
-    const fileName = "test";
+    const fileName = "player_data";
     const exportType = exportFromJSON.types.csv;
     exportFromJSON({ data, fileName, exportType });
   };
