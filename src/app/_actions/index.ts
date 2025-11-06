@@ -361,7 +361,7 @@ export const addUserToLeague = async (leagueId: number, userId: string) => {
   const [pickResponse] = await db.insert(picks).values(weekData).returning();
   if (!pickResponse) throw new Error("error in pick creation");
   console.log("pick response: ", pickResponse);
-  revalidatePath("/ffl/[leagueId]/requests]");
+  revalidatePath("/ffl/[leagueId]/requests");
   //const result = await db.insert(leagues).values().where(eq(leagues.id, leagueId))
 };
 

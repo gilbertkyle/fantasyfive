@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { useTheme } from "~/context/ThemeContext";
+import ExportCSVButton from "~/app/_components/ExportCSVButton";
 import "ag-grid-community/styles/ag-grid.css"; // Core CSS
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
 import "ag-grid-enterprise";
@@ -28,6 +29,22 @@ const WeekDetailTable = ({ league, week, leagueId, users }: Props) => {
     return {
       user,
       ...pick,
+    };
+  });
+
+  const dataToCSV = picks.map((pick) => {
+    return {
+      user: pick.user?.name,
+      quarterback: pick.quarterback?.player?.name,
+      quarterbackPoints: pick.quarterback?.fantasyPoints,
+      runningBack: pick.runningBack?.player?.name,
+      runningBackPoints: pick.runningBack?.fantasyPoints,
+      wideReceiver: pick.wideReceiver?.player?.name,
+      wideReceiverPoints: pick.wideReceiver?.fantasyPoints,
+      tightEnd: pick.tightEnd?.player?.name,
+      tightEndPoints: pick.tightEnd?.fantasyPoints,
+      defense: pick.defense?.team?.name,
+      defensePoints: pick.defense?.fantasyPoints,
     };
   });
 
@@ -127,6 +144,7 @@ const WeekDetailTable = ({ league, week, leagueId, users }: Props) => {
   ]);
   return (
     <div className={`${theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz"} h-screen`}>
+      <ExportCSVButton data={dataToCSV} />
       <AgGridReact columnDefs={columnDefs} rowData={rowData} defaultColDef={defaultColumnDef} />
     </div>
   );

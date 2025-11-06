@@ -96,7 +96,7 @@ export const fantasyTeamRelations = relations(fantasyTeams, ({ one, many }) => (
 }));
 
 export const teams = pgTable("teams", {
-  // table for the team, NOT for the defense week
+  // table for the actual football team, NOT for the defense week
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 80 }),
   abbr: varchar("abbr", { length: 80 }),
