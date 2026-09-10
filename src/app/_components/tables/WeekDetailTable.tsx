@@ -7,7 +7,7 @@ import ExportCSVButton from "~/app/_components/ExportCSVButton";
 import "ag-grid-community/styles/ag-grid.css"; // Core CSS
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
 import "ag-grid-enterprise";
-import type { fetchLeagueWeek } from "~/app/_actions";
+import { mergePickAndUserData, type fetchLeagueWeek } from "~/app/_actions";
 import type { filterUserForClient } from "~/server/helpers/filterUserForClient";
 
 type FilteredUser = ReturnType<typeof filterUserForClient>;
@@ -22,31 +22,16 @@ type Props = {
 
 const WeekDetailTable = ({ league, week, leagueId, users }: Props) => {
   const { theme } = useTheme();
-  const picks = league.teams.map((team) => {
-    const { ownerId } = team;
-    const pick = team.picks.find((pick) => pick.week === week);
-    const user = users.find((u) => u.id === ownerId);
-    return {
-      user,
-      ...pick,
-    };
-  });
-
-  const dataToCSV = picks.map((pick) => {
-    return {
-      user: pick.user?.name,
-      quarterback: pick.quarterback?.player?.name,
-      quarterbackPoints: pick.quarterback?.fantasyPoints,
-      runningBack: pick.runningBack?.player?.name,
-      runningBackPoints: pick.runningBack?.fantasyPoints,
-      wideReceiver: pick.wideReceiver?.player?.name,
-      wideReceiverPoints: pick.wideReceiver?.fantasyPoints,
-      tightEnd: pick.tightEnd?.player?.name,
-      tightEndPoints: pick.tightEnd?.fantasyPoints,
-      defense: pick.defense?.team?.name,
-      defensePoints: pick.defense?.fantasyPoints,
-    };
-  });
+  // const picks = league.teams.map((team) => {
+  //   const { ownerId } = team;
+  //   const pick = team.picks.find((pick) => pick.week === week);
+  //   const user = users.find((u) => u.id === ownerId);
+  //   return {
+  //     user,
+  //     ...pick,
+  //   };
+  // });
+  const picks = mergePickAndUserData({ league, users, week });
 
   const defaultColumnDef = useMemo(() => {
     return {
@@ -144,7 +129,7 @@ const WeekDetailTable = ({ league, week, leagueId, users }: Props) => {
   ]);
   return (
     <div className={`${theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz"} h-screen`}>
-      <ExportCSVButton data={dataToCSV} />
+      <ExportCSVButton picks={picks} />
       <AgGridReact columnDefs={columnDefs} rowData={rowData} defaultColDef={defaultColumnDef} />
     </div>
   );

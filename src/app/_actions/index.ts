@@ -24,6 +24,9 @@ import { inviteUserSchema } from "../_schemata/invitePlayerSchema";
 import { getOrCreateWeek, getOrCreateDefenseWeek } from "~/server/helpers/getOrCreateWeek";
 import { CURRENT_SEASON, SEASON_LENGTH_IN_WEEKS } from "~/settings";
 
+type FilteredUser = ReturnType<typeof filterUserForClient>;
+type League = Awaited<ReturnType<typeof fetchLeagueWeek>>;
+
 export const fetchLeagues = async () => {
   const user = await currentUser();
   if (!user) return [];
@@ -382,4 +385,25 @@ export const deleteOutgoingRequest = async (id: number) => {
   await new Promise((resolve) => setTimeout(resolve, 700));
   revalidatePath("/profile");
   return;
+};
+
+export const mergePickAndUserData = ({
+  league,
+  users,
+  week,
+}: {
+  league: League;
+  users: FilteredUser[];
+  week: number;
+}) => {
+  const picks = league.teams.map((team) => {
+    const { ownerId } = team;
+    const pick = team.picks.find((pick) => pick.week === week);
+    const user = users.find((u) => u.id === ownerId);
+    return {
+      user,
+      ...pick,
+    };
+  });
+  return picks;
 };

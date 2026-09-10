@@ -292,6 +292,8 @@ const LeagueDetailTable = ({
     rowData: myTeam.picks,
   };
 
+  console.log(rowData);
+
   return (
     <div className={`${theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz"} h-screen`}>
       <AgGridReact<(typeof myTeam.picks)[0]>

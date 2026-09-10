@@ -252,6 +252,7 @@ async function main() {
   });
 
   const data: unknown = await response.json();
+  console.log("data: ", data);
   //console.log("data: ", data);
 
   const parsedPlayerData = PlayersDataSchema.safeParse(data);
