@@ -17,7 +17,7 @@ const CreateLeagueForm = () => {
   });
 
   const onHandleSubmit = async (data: createLeagueFields) => {
-    await createLeague(data);
+    await createLeague({ data });
     reset();
   };
 

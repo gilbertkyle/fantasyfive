@@ -42,6 +42,13 @@ export const positionEnum = pgEnum("position", [
   "G",
   "MLB",
   "DE",
+  "DT",
+  "LB",
+  "SAF",
+  "C",
+  "K",
+  "OT",
+  "LS",
 ]);
 
 export const leagues = pgTable("leagues", {

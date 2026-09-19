@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { AgGridReact } from "ag-grid-react";
-import Link from "next/link";
+import { Link } from "@tanstack/react-router";
 import type { fetchLeagues } from "~/app/_actions";
 import { useTheme } from "~/context/ThemeContext";
 
@@ -22,7 +22,11 @@ const LeaguesTable = ({ leagues }: Props) => {
     {
       field: "name",
       cellRenderer: (params: any) => {
-        return <Link href={`ffl/${params.data.id.toString()}`}>{params.data.name}</Link>;
+        return (
+          <Link to="/ffl/$leagueId" params={{ leagueId: params.data.id.toString() }}>
+            {params.data.name}
+          </Link>
+        );
       },
     },
 

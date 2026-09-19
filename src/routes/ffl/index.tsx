@@ -1,10 +1,14 @@
-"use server";
-import React from "react";
+import { createFileRoute } from "@tanstack/react-router";
 import { fetchLeagues } from "~/app/_actions";
 import LeaguesTable from "~/app/_components/tables/LeaguesTable";
 
-const Page = async () => {
-  const leagues = await fetchLeagues();
+export const Route = createFileRoute("/ffl/")({
+  loader: async () => fetchLeagues(),
+  component: RouteComponent,
+});
+
+function RouteComponent() {
+  const leagues = Route.useLoaderData();
   return (
     <div className="max-w-full">
       <div>
@@ -15,6 +19,4 @@ const Page = async () => {
       </div>
     </div>
   );
-};
-
-export default Page;
+}

@@ -5,13 +5,12 @@ import type { FantasyTeamDetail, Player, Pick, Team } from "~/server/db/types";
 import { AgGridReact } from "ag-grid-react";
 import { CURRENT_SEASON, getCurrentWeek } from "~/settings";
 import { updatePick } from "~/app/_actions";
-import { useAction } from "next-safe-action/hooks";
 import toast from "react-hot-toast";
 import type { fetchLeagueDetail } from "~/app/_actions";
 import type { ColDef, ColGroupDef, GridOptions, IRichCellEditorParams } from "ag-grid-community";
 import { useTheme } from "~/context/ThemeContext";
 import { useMediaQuery } from "~/lib/utils";
-import Link from "next/link";
+import { Link } from "@tanstack/react-router";
 
 import "ag-grid-community/styles/ag-grid.css"; // Core CSS
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
@@ -36,26 +35,21 @@ const LeagueDetailTable = ({
   const { theme } = useTheme();
   const isMobile = useMediaQuery(768);
 
-  const { execute, result } = useAction(updatePick, {
-    onSuccess({ data, input }) {
-      console.log("data: ", data);
-      toast.success("Successful update!");
-    },
-    onError({ error, input }) {
+  const execute = async (data: Parameters<typeof updatePick>[0]["data"]) => {
+    try {
+      const result = await updatePick({ data });
+      if (result && "error" in result) {
+        console.log(result.error);
+        toast.error("error");
+      } else {
+        console.log("data: ", result);
+        toast.success("Successful update!");
+      }
+    } catch (error) {
       console.log(error);
       toast.error("error");
-    },
-    /* onSettled(result, input, reset) {
-      const { data } = result;
-      if (!data?.error) {
-        toast.success("great");
-        return;
-      }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const error: string[] = JSON.parse(data.error);
-      if (!error.length) toast.success("great!");
-    }, */
-  });
+    }
+  };
 
   const myTeam = fantasyTeams.find((team) => team.ownerId === userId) as FantasyTeamDetail;
 
@@ -90,7 +84,11 @@ const LeagueDetailTable = ({
       sort: "asc",
       cellRenderer: (cell: any) =>
         cell.data.week < week ? (
-          <Link className="text-blue-500 underline" href={`/ffl/${leagueId}/${cell.data.week}`}>
+          <Link
+            className="text-blue-500 underline"
+            to="/ffl/$leagueId/$week"
+            params={{ leagueId: String(leagueId), week: String(cell.data.week) }}
+          >
             {cell.data.week}
           </Link>
         ) : (
@@ -275,7 +273,7 @@ const LeagueDetailTable = ({
               params.data.teInput = te;
               params.data.defenseInput = defense;
               console.log("params: ", params.data);
-              execute(params.data);
+              void execute(params.data);
             }}
           >
             Update Row

@@ -1,3 +1,4 @@
+import { createFileRoute } from "@tanstack/react-router";
 import { db } from "~/server/db";
 import { playerWeeks, players } from "~/server/db/schema";
 import { z } from "zod";
@@ -230,46 +231,53 @@ const PlayersDataSchema = z.array(PlayerDataSchema);
 
 const PlayerWeeksDataSchema = z.array(PlayerWeekDataSchema);
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const week = (getCurrentWeek() - 1).toString(); // -1 so it gets the previous weeks picks when updating
-  const season = CURRENT_SEASON.toString();
-  const body = JSON.stringify({ week, season });
-  const response = await fetch(env.FETCH_PLAYERS_URL, {
-    method: "POST",
-    body: body,
-    headers: {
-      "Content-Type": "application/json",
+export const Route = createFileRoute("/api/fetch-players")({
+  server: {
+    handlers: {
+      GET: async () => {
+        const week = (getCurrentWeek() - 1).toString(); // -1 so it gets the previous weeks picks when updating
+        const season = CURRENT_SEASON.toString();
+        const body = JSON.stringify({ week, season });
+        const response = await fetch(env.FETCH_PLAYERS_URL, {
+          method: "POST",
+          body: body,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const data: unknown = await response.json();
+        const parsedPlayerData = PlayersDataSchema.safeParse(data);
+        const parsedPlayerWeekData = PlayerWeeksDataSchema.safeParse(data);
+
+        if (!parsedPlayerWeekData.success) {
+          console.error("error", parsedPlayerWeekData.error);
+          return new Response(null, { status: 500 });
+        }
+
+        if (!parsedPlayerData.success) {
+          console.error("error: ", parsedPlayerData.error);
+          return new Response(null, { status: 500 });
+        }
+
+        const playerWeekData = parsedPlayerWeekData.data;
+        const playerData = parsedPlayerData.data;
+
+        await db.insert(players).values(playerData).onConflictDoNothing();
+
+        // insert player weeks into playerweek table
+        //await db.insert(playerWeeks).values(playerWeekData);
+
+        await db
+          .insert(playerWeeks)
+          .values(playerWeekData)
+          .onConflictDoUpdate({
+            target: [playerWeeks.season, playerWeeks.week, playerWeeks.playerId],
+            set: { fantasyPoints: sql`excluded.fantasy_points` },
+          });
+
+        return new Response(null, { status: 200 });
+      },
     },
-  });
-
-  const data: unknown = await response.json();
-  const parsedPlayerData = PlayersDataSchema.safeParse(data);
-  const parsedPlayerWeekData = PlayerWeeksDataSchema.safeParse(data);
-
-  if (!parsedPlayerWeekData.success) {
-    console.error("error", parsedPlayerWeekData.error);
-    return;
-  }
-
-  if (!parsedPlayerData.success) {
-    console.error("error: ", parsedPlayerData.error);
-    return;
-  }
-
-  const playerWeekData = parsedPlayerWeekData.data;
-  const playerData = parsedPlayerData.data;
-
-  await db.insert(players).values(playerData).onConflictDoNothing();
-
-  // insert player weeks into playerweek table
-  //await db.insert(playerWeeks).values(playerWeekData);
-
-  await db
-    .insert(playerWeeks)
-    .values(playerWeekData)
-    .onConflictDoUpdate({
-      target: [playerWeeks.season, playerWeeks.week, playerWeeks.playerId],
-      set: { fantasyPoints: sql`excluded.fantasy_points` },
-    });
-}
+  },
+});

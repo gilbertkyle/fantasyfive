@@ -1,3 +1,3 @@
-import type { clerkClient } from "@clerk/nextjs";
+import type { clerkClient } from "@clerk/tanstack-react-start/server";
 
-export type User = Awaited<ReturnType<typeof clerkClient.users.getUserList>>[0];
+export type User = Awaited<ReturnType<ReturnType<typeof clerkClient>["users"]["getUserList"]>>["data"][0];

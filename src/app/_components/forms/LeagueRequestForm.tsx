@@ -25,7 +25,7 @@ const LeagueRequestForm = () => {
 
   const { data: leagues } = useQuery({
     queryKey: ["leagues", leagueName],
-    queryFn: () => fetchPublicLeagues(leagueName),
+    queryFn: () => fetchPublicLeagues({ data: leagueName }),
     enabled: !!leagueName,
   });
 
@@ -38,7 +38,7 @@ const LeagueRequestForm = () => {
   };
 
   const handleSubmit = async (id: number) => {
-    const result = await insertLeagueRequest(id);
+    const result = await insertLeagueRequest({ data: id });
 
     //@ts-expect-error typescript can't figure this out.
     if (result.error) {

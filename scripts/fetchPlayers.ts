@@ -23,6 +23,13 @@ const positions = [
   "G",
   "MLB",
   "DE",
+  "DT",
+  "LB",
+  "SAF",
+  "C",
+  "K",
+  "OT",
+  "LS",
 ] as const;
 
 const PlayerWeekDataSchema = z
@@ -214,9 +221,9 @@ const PlayerWeekDataSchema = z
 const PlayerDataSchema = z
   .object({
     player_id: z.string(),
-    player_name: z.string(),
+    player_name: z.string().optional(),
     player_display_name: z.string().optional(),
-    position: z.enum(positions),
+    position: z.enum(positions).optional(),
     recent_team: z.string().optional(),
     headshot_url: z.string().url().optional(),
   })
@@ -228,9 +235,14 @@ const PlayerDataSchema = z
     headshotUrl: player.headshot_url,
   }));
 
-const PlayersDataSchema = z.array(PlayerDataSchema);
+function withoutNullPlayerIds(data: unknown) {
+  if (!Array.isArray(data)) return data;
+  return data.filter((row) => (row as { player_id?: unknown } | null)?.player_id != null);
+}
 
-const PlayerWeeksDataSchema = z.array(PlayerWeekDataSchema);
+const PlayersDataSchema = z.preprocess(withoutNullPlayerIds, z.array(PlayerDataSchema));
+
+const PlayerWeeksDataSchema = z.preprocess(withoutNullPlayerIds, z.array(PlayerWeekDataSchema));
 
 async function main() {
   const args = process.argv.slice(2); // gets arguments passed through CLI
@@ -240,6 +252,7 @@ async function main() {
   const body = JSON.stringify({ week, season });
 
   const dataUrl = env.FETCH_PLAYERS_URL;
+  console.log("Data url: ", dataUrl);
 
   console.log("body: ", body);
 
@@ -250,6 +263,8 @@ async function main() {
       "Content-Type": "application/json",
     },
   });
+
+  console.log("response: ", response);
 
   const data: unknown = await response.json();
   console.log("data: ", data);

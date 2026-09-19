@@ -14,7 +14,13 @@ const RequestsTable = ({ requests }: { requests: Requests }) => {
         return (
           <div key={request.league_requests.id}>
             <span>{request.league_requests.from}</span>
-            <span onClick={() => addUserToLeague(request.leagues.id, request.league_requests.from)}>Accept</span>
+            <span
+              onClick={() =>
+                addUserToLeague({ data: { leagueId: request.leagues.id, userId: request.league_requests.from } })
+              }
+            >
+              Accept
+            </span>
           </div>
         );
       })}

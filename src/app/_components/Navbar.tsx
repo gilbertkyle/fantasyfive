@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import { UserButton, useUser, SignInButton } from "@clerk/nextjs";
-import Link from "next/link";
+import { UserButton, useUser, SignInButton } from "@clerk/tanstack-react-start";
 import {
   DropdownMenu,
   DropdownMenuContent,

@@ -19,7 +19,7 @@ const InvitePlayerForm = ({ leagueId }: { leagueId: number }) => {
 
   const { data: users } = useQuery({
     queryKey: ["users", userInput],
-    queryFn: () => fetchUserList(userInput),
+    queryFn: () => fetchUserList({ data: userInput }),
     enabled: !!userInput, // useQuery doesn't run until userInput is truthy
   });
 
@@ -41,7 +41,7 @@ const InvitePlayerForm = ({ leagueId }: { leagueId: number }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit((data) => inviteUser(data))}>
+    <form onSubmit={handleSubmit((data) => inviteUser({ data }))}>
       <div>{JSON.stringify(users, null, 2) ?? "nothing"}</div>
       {/* <div>
         <label htmlFor="user">User</label>

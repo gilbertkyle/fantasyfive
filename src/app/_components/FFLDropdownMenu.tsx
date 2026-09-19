@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@tanstack/react-router";
 import React from "react";
 import {
   NavigationMenu,
@@ -25,15 +25,15 @@ export default function FFLDropdownMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger className="dark:text-stone-200">FFL</DropdownMenuTrigger>
       <DropdownMenuContent>
-        <Link href="/ffl">
+        <Link to="/ffl">
           <DropdownMenuItem>Home</DropdownMenuItem>
         </Link>
         <DropdownMenuLabel>Leagues</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <Link href="/ffl/league/join">
+        <Link to="/ffl/league/join">
           <DropdownMenuItem>Join</DropdownMenuItem>
         </Link>
-        <Link href="/ffl/league/create">
+        <Link to="/ffl/league/create">
           <DropdownMenuItem>Create</DropdownMenuItem>
         </Link>
       </DropdownMenuContent>

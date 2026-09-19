@@ -1,1 +1,1 @@
-import "@testing-library/jest-dom"; // Adds convenient DOM matchers
+import "@testing-library/jest-dom/vitest"; // Adds convenient DOM matchers

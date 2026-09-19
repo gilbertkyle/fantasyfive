@@ -12,13 +12,10 @@
 /prisma/db.sqlite
 /prisma/db.sqlite-journal
 
-# next.js
-/.next/
-/out/
-next-env.d.ts
-
-# production
+# build output
+/dist
 /build
+src/routeTree.gen.ts
 
 # misc
 .DS_Store
@@ -51,3 +48,4 @@ yarn-error.log*
 /lambdas
 /scripts
 response.json
+MIGRATION_NOTES.txt

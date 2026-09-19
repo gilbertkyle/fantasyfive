@@ -2,9 +2,9 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import TestForm from "~/app/_components/TestForm";
 import Navbar from "~/app/_components/Navbar";
-import { useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/tanstack-react-start";
 
-vi.mock("@clerk/nextjs");
+vi.mock("@clerk/tanstack-react-start");
 
 describe("TestForm", () => {
   it("renders a heading", () => {
