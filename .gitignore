@@ -15,6 +15,7 @@
 # build output
 /dist
 /build
+/.output
 src/routeTree.gen.ts
 
 # misc
