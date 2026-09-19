@@ -14,7 +14,8 @@
     "fetch-players": "tsx scripts/fetchPlayers.ts",
     "fetch-defenses": "tsx scripts/fetchDefenses.ts",
     "load-teams": "tsx scripts/loadTeams.ts",
-    "test": "vitest"
+    "test": "vitest",
+    "prime": "tsx scripts/prime.ts"
   },
   "dependencies": {
     "@clerk/tanstack-react-start": "^1.5.13",

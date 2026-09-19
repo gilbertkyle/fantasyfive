@@ -30,6 +30,10 @@ const positions = [
   "K",
   "OT",
   "LS",
+  "OL",
+  "DL",
+  "S",
+  "NT",
 ] as const;
 
 const PlayerWeekDataSchema = z
@@ -222,10 +226,10 @@ const PlayerDataSchema = z
   .object({
     player_id: z.string(),
     player_name: z.string().optional(),
-    player_display_name: z.string().optional(),
-    position: z.enum(positions).optional(),
-    recent_team: z.string().optional(),
-    headshot_url: z.string().url().optional(),
+    player_display_name: z.string().nullish(),
+    position: z.enum(positions).nullish(),
+    recent_team: z.string().nullish(),
+    headshot_url: z.string().url().nullish(),
   })
   .transform((player) => ({
     id: player.player_id,
