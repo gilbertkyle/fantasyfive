@@ -2,8 +2,8 @@ name: Fetch defenses
 
 on:
   schedule:
-    # Tuesday 10:00 UTC, after Monday Night Football has finished
-    - cron: "0 10 * * 2"
+    # 10:00 UTC on Monday, Tuesday, and Friday
+    - cron: "0 10 * * 1,2,5"
   workflow_dispatch: {}
 
 jobs:
