@@ -4,10 +4,6 @@
     {
       "path": "/api/fetch-players",
       "schedule": "0 0 * * *"
-    },
-    {
-      "path": "/api/fetch-defenses",
-      "schedule": "0 0 * * *"
     }
   ]
 }

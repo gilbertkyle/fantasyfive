@@ -23,6 +23,18 @@ const positions = [
   "ILB",
   "G",
   "MLB",
+  "DE",
+  "DT",
+  "LB",
+  "SAF",
+  "C",
+  "K",
+  "OT",
+  "LS",
+  "OL",
+  "DL",
+  "S",
+  "NT",
 ] as const;
 
 const PlayerWeekDataSchema = z
@@ -214,27 +226,37 @@ const PlayerWeekDataSchema = z
 const PlayerDataSchema = z
   .object({
     player_id: z.string(),
-    player_name: z.string(),
-    player_display_name: z.string().optional(),
-    position: z.enum(positions),
-    recent_team: z.string().optional(),
+    player_name: z.string().optional(),
+    player_display_name: z.string().nullish(),
+    position: z.enum(positions).nullish(),
+    recent_team: z.string().nullish(),
+    headshot_url: z.string().url().nullish(),
   })
   .transform((player) => ({
     id: player.player_id,
     name: player.player_name,
     displayName: player.player_display_name,
     position: player.position,
-    headshotUrl: "",
+    headshotUrl: player.headshot_url,
   }));
 
-const PlayersDataSchema = z.array(PlayerDataSchema);
+function withoutNullPlayerIds(data: unknown) {
+  if (!Array.isArray(data)) return data;
+  return data.filter((row) => (row as { player_id?: unknown } | null)?.player_id != null);
+}
 
-const PlayerWeeksDataSchema = z.array(PlayerWeekDataSchema);
+const PlayersDataSchema = z.preprocess(withoutNullPlayerIds, z.array(PlayerDataSchema));
+
+const PlayerWeeksDataSchema = z.preprocess(withoutNullPlayerIds, z.array(PlayerWeekDataSchema));
 
 export const Route = createFileRoute("/api/fetch-players")({
   server: {
     handlers: {
-      GET: async () => {
+      GET: async ({ request }) => {
+        if (env.CRON_SECRET && request.headers.get("authorization") !== `Bearer ${env.CRON_SECRET}`) {
+          return new Response(null, { status: 401 });
+        }
+
         const week = (getCurrentWeek() - 1).toString(); // -1 so it gets the previous weeks picks when updating
         const season = CURRENT_SEASON.toString();
         const body = JSON.stringify({ week, season });
@@ -263,10 +285,13 @@ export const Route = createFileRoute("/api/fetch-players")({
         const playerWeekData = parsedPlayerWeekData.data;
         const playerData = parsedPlayerData.data;
 
-        await db.insert(players).values(playerData).onConflictDoNothing();
-
-        // insert player weeks into playerweek table
-        //await db.insert(playerWeeks).values(playerWeekData);
+        await db
+          .insert(players)
+          .values(playerData)
+          .onConflictDoUpdate({
+            target: [players.id],
+            set: { headshotUrl: sql`excluded.headshot_url` },
+          });
 
         await db
           .insert(playerWeeks)

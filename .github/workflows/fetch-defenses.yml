@@ -1,0 +1,25 @@
+name: Fetch defenses
+
+on:
+  schedule:
+    # Tuesday 10:00 UTC, after Monday Night Football has finished
+    - cron: "0 10 * * 2"
+  workflow_dispatch: {}
+
+jobs:
+  fetch-defenses:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci
+
+      - run: npx tsx scripts/fetchDefenses.ts
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          FETCH_PLAYERS_URL: ${{ secrets.FETCH_PLAYERS_URL }}

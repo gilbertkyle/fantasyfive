@@ -17,6 +17,7 @@ export const env = createEnv({
     DEV_DATABASE_URL: z.string().url().optional(),
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
     FETCH_PLAYERS_URL: z.string().url(),
+    CRON_SECRET: z.string().optional(),
   },
 
   runtimeEnv: {
@@ -24,6 +25,7 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     FETCH_PLAYERS_URL: process.env.FETCH_PLAYERS_URL,
     DEV_DATABASE_URL: process.env.DEV_DATABASE_URL,
+    CRON_SECRET: process.env.CRON_SECRET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
