@@ -5,7 +5,6 @@
 import { relations } from "drizzle-orm";
 import {
   pgTable,
-  pgEnum,
   serial,
   varchar,
   timestamp,
@@ -23,37 +22,6 @@ import {
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-
-export const positionEnum = pgEnum("position", [
-  "QB",
-  "RB",
-  "WR",
-  "TE",
-  "DEF",
-  "FB",
-  "T",
-  "SS",
-  "OLB",
-  "CB",
-  "P",
-  "FS",
-  "DB",
-  "ILB",
-  "G",
-  "MLB",
-  "DE",
-  "DT",
-  "LB",
-  "SAF",
-  "C",
-  "K",
-  "OT",
-  "LS",
-  "OL",
-  "DL",
-  "S",
-  "NT",
-]);
 
 export const leagues = pgTable("leagues", {
   id: serial("id").primaryKey(),
@@ -129,7 +97,7 @@ export const players = pgTable("players", {
   id: varchar("id", { length: 64 }).primaryKey(),
   name: varchar("name", { length: 30 }),
   displayName: varchar("display_name", { length: 48 }),
-  position: positionEnum("position"),
+  position: varchar("position", { length: 8 }),
   headshotUrl: varchar("headshot_url", { length: 256 }),
 });
 

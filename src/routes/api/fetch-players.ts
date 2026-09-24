@@ -6,37 +6,6 @@ import { CURRENT_SEASON, getCurrentWeek } from "~/settings";
 import { env } from "~/env";
 import { sql } from "drizzle-orm";
 
-const positions = [
-  "QB",
-  "RB",
-  "WR",
-  "TE",
-  "DEF",
-  "SS",
-  "FB",
-  "T",
-  "CB",
-  "OLB",
-  "P",
-  "FS",
-  "DB",
-  "ILB",
-  "G",
-  "MLB",
-  "DE",
-  "DT",
-  "LB",
-  "SAF",
-  "C",
-  "K",
-  "OT",
-  "LS",
-  "OL",
-  "DL",
-  "S",
-  "NT",
-] as const;
-
 const PlayerWeekDataSchema = z
   .object({
     player_id: z.string(),
@@ -228,7 +197,7 @@ const PlayerDataSchema = z
     player_id: z.string(),
     player_name: z.string().optional(),
     player_display_name: z.string().nullish(),
-    position: z.enum(positions).nullish(),
+    position: z.string().nullish(),
     recent_team: z.string().nullish(),
     headshot_url: z.string().url().nullish(),
   })
